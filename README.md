@@ -291,12 +291,20 @@ vercel --prod
 
 ### Backend Deployment (Render/Railway)
 
-1. **Create `Procfile` (for Heroku) or use existing start script**
+1. **Extract Firebase Credentials for Production:**
+```bash
+cd backend
+node extract-firebase-env.js
+```
+This will display the environment variables needed. Copy them to your hosting platform.
 
 2. **Set environment variables** in hosting platform:
    - All variables from `.env.example`
+   - Firebase credentials (from step 1 above)
    - Update `FRONTEND_URL` to your deployed frontend URL
    - Update `GOOGLE_CALLBACK_URL` to your backend URL + `/api/auth/google/callback`
+
+📖 **See [DEPLOYMENT-FIREBASE.md](./DEPLOYMENT-FIREBASE.md) for detailed Firebase deployment guide**
 
 3. **Update Google OAuth** redirect URIs in Google Console
 
