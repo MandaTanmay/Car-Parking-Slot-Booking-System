@@ -513,6 +513,7 @@ This project is for educational/portfolio purposes.
 
 Built as a full-stack demonstration project.
 
+
 ## 🙏 Acknowledgments
 
 - React and Node.js communities
