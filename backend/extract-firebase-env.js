@@ -1,10 +1,15 @@
-const fs = require('fs');
-const path = require('path');
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
 
 /**
  * Helper script to extract Firebase credentials for deployment
  * Run this locally to get the values needed for production environment variables
  */
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 const serviceAccountPath = path.join(__dirname, 'firebase-service-account.json');
 
