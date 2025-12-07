@@ -40,6 +40,21 @@ app.use('/api/auth', authRoutes);
 app.use('/api', bookingRoutes);
 app.use('/api/admin', adminRoutes);
 
+// Root route
+app.get('/', (req, res) => {
+  res.json({
+    message: '🚗 ParkEasy API - Car Parking Slot Booking System',
+    version: '1.0.0',
+    status: 'running',
+    endpoints: {
+      health: '/health',
+      auth: '/api/auth',
+      bookings: '/api',
+      admin: '/api/admin',
+    },
+  });
+});
+
 // Health check
 app.get('/health', (req, res) => {
   res.json({ status: 'OK', timestamp: new Date().toISOString() });
