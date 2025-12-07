@@ -60,6 +60,15 @@ app.get('/health', (req, res) => {
   res.json({ status: 'OK', timestamp: new Date().toISOString() });
 });
 
+// Debug endpoint to check CORS configuration
+app.get('/debug/config', (req, res) => {
+  res.json({
+    frontendUrl: process.env.FRONTEND_URL,
+    nodeEnv: process.env.NODE_ENV,
+    corsOrigin: process.env.FRONTEND_URL || 'http://localhost:3000',
+  });
+});
+
 // Socket.IO connection handling
 io.on('connection', (socket) => {
   console.log(`✅ Client connected: ${socket.id}`);
