@@ -47,12 +47,12 @@ const Dashboard = () => {
     return bookings.filter((booking) => {
       if (status === 'upcoming') {
         return (
-          (booking.status === 'approved' || booking.status === 'pending') &&
+          booking.status === 'booked' &&
           new Date(booking.start_time) > now
         );
       } else if (status === 'active') {
         return (
-          (booking.status === 'approved' || booking.status === 'checked_in') &&
+          (booking.status === 'booked' || booking.status === 'checked_in') &&
           new Date(booking.start_time) <= now &&
           new Date(booking.end_time) >= now
         );
@@ -60,8 +60,7 @@ const Dashboard = () => {
         return (
           booking.status === 'completed' ||
           booking.status === 'cancelled' ||
-          booking.status === 'declined' ||
-          ((booking.status === 'approved' || booking.status === 'pending') && new Date(booking.end_time) < now)
+          (booking.status === 'booked' && new Date(booking.end_time) < now)
         );
       }
       return false;

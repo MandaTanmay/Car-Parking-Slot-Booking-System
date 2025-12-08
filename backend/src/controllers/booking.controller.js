@@ -33,7 +33,7 @@ export const getSlotsByParkingLot = async (req, res) => {
         CASE WHEN EXISTS (
           SELECT 1 FROM bookings b
           WHERE b.slot_id = s.id
-          AND b.status IN ('pending', 'approved', 'checked_in')
+          AND b.status IN ('booked', 'checked_in')
           ${startTime && endTime ? 
             `AND NOT (b.end_time <= $2 OR b.start_time >= $3)` : ''}
         ) THEN false ELSE true END as is_available
@@ -192,7 +192,7 @@ export const createBooking = async (req, res) => {
       const conflictCheck = await client.query(
         `SELECT id FROM bookings
          WHERE slot_id = $1
-         AND status IN ('pending', 'approved', 'checked_in')
+         AND status IN ('booked', 'checked_in')
          AND NOT (end_time <= $2 OR start_time >= $3)
          FOR UPDATE`,
         [slotId, startTime, endTime]
@@ -202,10 +202,10 @@ export const createBooking = async (req, res) => {
         throw new Error('Slot is already booked for the selected time period');
       }
 
-      // Create booking with pending status
+      // Create booking with booked status
       const bookingResult = await client.query(
         `INSERT INTO bookings (user_id, slot_id, start_time, end_time, vehicle_number, status)
-         VALUES ($1, $2, $3, $4, $5, 'pending')
+         VALUES ($1, $2, $3, $4, $5, 'booked')
          RETURNING *`,
         [userId, slotId, startTime, endTime, vehicleNumber.trim().toUpperCase()]
       );
@@ -243,7 +243,7 @@ export const createBooking = async (req, res) => {
       io.to(`parking_lot_${parkingLotId}`).emit('slot_update', {
         slotId,
         parkingLotId,
-        status: 'pending',
+        status: 'booked',
         bookingId: result.id,
       });
       console.log('✅ Emitted slot_update event for parking lot:', parkingLotId);
