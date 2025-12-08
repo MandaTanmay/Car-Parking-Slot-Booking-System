@@ -56,56 +56,169 @@ const BookingPage = () => {
 
   const downloadBooking = () => {
     const doc = new jsPDF();
+    const pageWidth = doc.internal.pageSize.width;
+    const pageHeight = doc.internal.pageSize.height;
     
-    // Add title
+    // Header with background
+    doc.setFillColor(37, 99, 235); // Primary blue
+    doc.rect(0, 0, pageWidth, 45, 'F');
+    
+    // Title
+    doc.setTextColor(255, 255, 255);
+    doc.setFontSize(24);
+    doc.setFont('helvetica', 'bold');
+    doc.text('ParkEasy', pageWidth / 2, 20, { align: 'center' });
+    
+    doc.setFontSize(14);
+    doc.setFont('helvetica', 'normal');
+    doc.text('Parking Booking Receipt', pageWidth / 2, 32, { align: 'center' });
+    
+    // Reset text color
+    doc.setTextColor(0, 0, 0);
+    let yPos = 60;
+    
+    // Booking Information Box
+    doc.setFillColor(249, 250, 251);
+    doc.rect(15, yPos - 5, pageWidth - 30, 35, 'F');
+    doc.setDrawColor(229, 231, 235);
+    doc.rect(15, yPos - 5, pageWidth - 30, 35);
+    
+    doc.setFontSize(10);
+    doc.setFont('helvetica', 'bold');
+    doc.text('BOOKING ID:', 20, yPos);
+    doc.setFont('helvetica', 'normal');
+    doc.text(booking.id.substring(0, 18) + '...', 50, yPos);
+    
+    yPos += 8;
+    doc.setFont('helvetica', 'bold');
+    doc.text('STATUS:', 20, yPos);
+    doc.setFont('helvetica', 'normal');
+    const statusText = booking.status.toUpperCase();
+    doc.setTextColor(34, 197, 94); // Green for active status
+    doc.text(statusText, 50, yPos);
+    doc.setTextColor(0, 0, 0);
+    
+    yPos += 8;
+    doc.setFont('helvetica', 'bold');
+    doc.text('BOOKED ON:', 20, yPos);
+    doc.setFont('helvetica', 'normal');
+    doc.text(new Date(booking.created_at).toLocaleDateString(), 50, yPos);
+    
+    yPos += 8;
+    doc.setFont('helvetica', 'bold');
+    doc.text('VEHICLE:', 20, yPos);
+    doc.setFont('helvetica', 'normal');
+    doc.text(booking.vehicle_number, 50, yPos);
+    
+    yPos += 20;
+    
+    // Parking Location
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(12);
+    doc.text('PARKING LOCATION', 20, yPos);
+    doc.setLineWidth(0.5);
+    doc.line(20, yPos + 2, 80, yPos + 2);
+    
+    yPos += 10;
+    doc.setFontSize(10);
+    doc.setFont('helvetica', 'bold');
+    doc.text(booking.parking_lot_name, 20, yPos);
+    
+    yPos += 6;
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(9);
+    const addressLines = doc.splitTextToSize(booking.parking_lot_address, pageWidth - 40);
+    doc.text(addressLines, 20, yPos);
+    
+    yPos += (addressLines.length * 5) + 10;
+    
+    // Slot Information
+    doc.setFillColor(37, 99, 235);
+    doc.rect(20, yPos - 5, 40, 30, 'F');
+    doc.setTextColor(255, 255, 255);
     doc.setFontSize(20);
-    doc.text('🚗 ParkEasy - Booking Receipt', 20, 20);
+    doc.setFont('helvetica', 'bold');
+    doc.text(booking.slot_code, 40, yPos + 10, { align: 'center' });
+    doc.setFontSize(9);
+    doc.text(booking.slot_type.toUpperCase(), 40, yPos + 18, { align: 'center' });
+    doc.setTextColor(0, 0, 0);
     
-    // Add booking details
-    doc.setFontSize(12);
-    doc.text(`Booking ID: ${booking.id}`, 20, 40);
-    doc.text(`Status: ${booking.status.toUpperCase()}`, 20, 50);
-    doc.text('', 20, 60);
+    yPos += 40;
     
-    // Parking Information
-    doc.setFontSize(14);
-    doc.text('Parking Information:', 20, 70);
+    // Parking Duration
+    doc.setFont('helvetica', 'bold');
     doc.setFontSize(12);
-    doc.text(`Parking Lot: ${booking.parking_lot_name}`, 20, 80);
-    doc.text(`Address: ${booking.parking_lot_address}`, 20, 90);
-    doc.text(`Slot: ${booking.slot_code} (${booking.slot_type})`, 20, 100);
-    doc.text(`Vehicle: ${booking.vehicle_number}`, 20, 110);
-    doc.text('', 20, 120);
+    doc.text('PARKING DURATION', 20, yPos);
+    doc.line(20, yPos + 2, 90, yPos + 2);
     
-    // Time Details
-    doc.setFontSize(14);
-    doc.text('Time Details:', 20, 130);
-    doc.setFontSize(12);
-    doc.text(`Start: ${formatDateTime(booking.start_time)}`, 20, 140);
-    doc.text(`End: ${formatDateTime(booking.end_time)}`, 20, 150);
-    doc.text(`Booked On: ${formatDateTime(booking.created_at)}`, 20, 160);
-    doc.text('', 20, 170);
+    yPos += 10;
+    doc.setFontSize(10);
+    doc.text('Check-in:', 20, yPos);
+    doc.setFont('helvetica', 'normal');
+    doc.text(formatDateTime(booking.start_time), 60, yPos);
     
-    // Payment Details
-    const amount = calculateAmount();
-    doc.setFontSize(14);
-    doc.text('Payment Details:', 20, 180);
-    doc.setFontSize(12);
+    yPos += 8;
+    doc.setFont('helvetica', 'bold');
+    doc.text('Check-out:', 20, yPos);
+    doc.setFont('helvetica', 'normal');
+    doc.text(formatDateTime(booking.end_time), 60, yPos);
+    
     const startTime = new Date(booking.start_time);
     const endTime = new Date(booking.end_time);
     const hours = Math.ceil((endTime - startTime) / (1000 * 60 * 60));
-    doc.text(`Duration: ${hours} hour(s)`, 20, 190);
-    doc.text(`Rate: ₹${booking.hourly_rate || 50}/hour`, 20, 200);
-    doc.setFontSize(16);
-    doc.text(`Total Amount: ₹${amount.toFixed(2)}`, 20, 215);
+    const amount = calculateAmount();
+    
+    yPos += 8;
+    doc.setFont('helvetica', 'bold');
+    doc.text('Total Duration:', 20, yPos);
+    doc.setFont('helvetica', 'normal');
+    doc.text(`${hours} hour(s)`, 60, yPos);
+    
+    yPos += 20;
+    
+    // Payment Summary Box
+    doc.setFillColor(249, 250, 251);
+    doc.rect(15, yPos - 5, pageWidth - 30, 30, 'F');
+    doc.setDrawColor(229, 231, 235);
+    doc.rect(15, yPos - 5, pageWidth - 30, 30);
+    
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(12);
+    doc.text('PAYMENT SUMMARY', 20, yPos);
+    
+    yPos += 10;
+    doc.setFontSize(10);
+    doc.setFont('helvetica', 'normal');
+    doc.text('Hourly Rate:', 20, yPos);
+    doc.text(`₹${booking.hourly_rate || 50}/hour`, pageWidth - 50, yPos);
+    
+    yPos += 8;
+    doc.text('Duration:', 20, yPos);
+    doc.text(`${hours} hour(s)`, pageWidth - 50, yPos);
+    
+    yPos += 15;
+    
+    // Total Amount - Highlighted
+    doc.setFillColor(37, 99, 235);
+    doc.rect(15, yPos - 8, pageWidth - 30, 20, 'F');
+    doc.setTextColor(255, 255, 255);
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(14);
+    doc.text('TOTAL AMOUNT:', 20, yPos);
+    doc.text(`₹${amount.toFixed(2)}`, pageWidth - 20, yPos, { align: 'right' });
+    doc.setTextColor(0, 0, 0);
     
     // Footer
-    doc.setFontSize(10);
-    doc.text('Thank you for using ParkEasy!', 20, 270);
-    doc.text('For support, contact: support@parkeasy.com', 20, 280);
+    yPos = pageHeight - 30;
+    doc.setFontSize(9);
+    doc.setFont('helvetica', 'normal');
+    doc.setTextColor(100, 100, 100);
+    doc.text('Thank you for choosing ParkEasy!', pageWidth / 2, yPos, { align: 'center' });
+    yPos += 6;
+    doc.text('For support: support@parkeasy.com | +91-1800-PARKING', pageWidth / 2, yPos, { align: 'center' });
     
     // Save PDF
-    doc.save(`booking-${booking.id}.pdf`);
+    doc.save(`ParkEasy-Booking-${booking.slot_code}-${new Date().getTime()}.pdf`);
   };
 
   const getStatusColor = (status) => {
