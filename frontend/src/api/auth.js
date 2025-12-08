@@ -1,6 +1,6 @@
 import api from './api';
 import { auth, googleProvider } from '../config/firebase';
-import { signInWithPopup, signOut, createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
+import { signInWithPopup, signOut, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendPasswordResetEmail } from 'firebase/auth';
 
 // Firebase Google Sign-In
 export const loginWithGoogle = async () => {
@@ -123,6 +123,17 @@ export const logout = async () => {
     // Clear local storage even if backend call fails
     localStorage.removeItem('token');
     localStorage.removeItem('user');
+  }
+};
+
+// Reset Password
+export const resetPassword = async (email) => {
+  try {
+    await sendPasswordResetEmail(auth, email);
+    console.log('Password reset email sent to:', email);
+  } catch (error) {
+    console.error('Password reset error:', error);
+    throw error;
   }
 };
 

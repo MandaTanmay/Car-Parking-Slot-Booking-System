@@ -1,15 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { loginWithGoogle, loginWithEmail, signUpWithEmail } from '../api/auth';
+import { loginWithGoogle, loginWithEmail, signUpWithEmail, resetPassword } from '../api/auth';
 
 const Login = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [successMessage, setSuccessMessage] = useState(null);
   // Check URL parameter to determine if this is register mode
   const mode = searchParams.get('mode');
   const [isSignUp, setIsSignUp] = useState(mode === 'register');
+  const [isForgotPassword, setIsForgotPassword] = useState(false);
   
   // Form state
   const [email, setEmail] = useState('');
@@ -72,6 +74,31 @@ const Login = () => {
     }
   };
 
+  const handleForgotPassword = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setError(null);
+    setSuccessMessage(null);
+    
+    try {
+      await resetPassword(email);
+      setSuccessMessage('Password reset email sent! Check your inbox.');
+      setLoading(false);
+    } catch (err) {
+      console.error('Password reset failed:', err);
+      let errorMessage = 'Failed to send reset email. Please try again.';
+      
+      if (err.code === 'auth/user-not-found') {
+        errorMessage = 'No account found with this email address.';
+      } else if (err.code === 'auth/invalid-email') {
+        errorMessage = 'Invalid email address.';
+      }
+      
+      setError(errorMessage);
+      setLoading(false);
+    }
+  };
+
   const urlError = searchParams.get('error');
 
   return (
@@ -88,15 +115,21 @@ const Login = () => {
           </div>
         )}
 
+        {successMessage && (
+          <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
+            {successMessage}
+          </div>
+        )}
+
         {/* Email/Password Form */}
-        <form onSubmit={handleEmailAuth} className="space-y-4 mb-4">
+        <form onSubmit={isForgotPassword ? handleForgotPassword : handleEmailAuth} className="space-y-4 mb-4">
           <div className="text-center mb-4">
             <h2 className="text-lg font-semibold text-gray-700">
-              {isSignUp ? 'Create Account' : 'Sign In'}
+              {isForgotPassword ? 'Reset Password' : (isSignUp ? 'Create Account' : 'Sign In')}
             </h2>
           </div>
 
-          {isSignUp && (
+          {isSignUp && !isForgotPassword && (
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Name
@@ -128,57 +161,92 @@ const Login = () => {
             />
           </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Password
-            </label>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-              placeholder="••••••••"
-              required
-              disabled={loading}
-              minLength={6}
-            />
-          </div>
+          {!isForgotPassword && (
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Password
+              </label>
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                placeholder="••••••••"
+                required
+                disabled={loading}
+                minLength={6}
+              />
+            </div>
+          )}
 
           <button
             type="submit"
             disabled={loading}
             className="w-full bg-primary-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-primary-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {loading ? 'Please wait...' : (isSignUp ? 'Sign Up' : 'Sign In')}
+            {loading ? 'Please wait...' : (isForgotPassword ? 'Send Reset Email' : (isSignUp ? 'Sign Up' : 'Sign In'))}
           </button>
 
-          <div className="text-center">
-            <button
-              type="button"
-              onClick={() => {
-                setIsSignUp(!isSignUp);
-                setError(null);
-              }}
-              className="text-sm text-primary-600 hover:text-primary-700"
-              disabled={loading}
-            >
-              {isSignUp ? 'Already have an account? Sign In' : "Don't have an account? Sign Up"}
-            </button>
+          <div className="text-center space-y-2">
+            {!isForgotPassword && !isSignUp && (
+              <button
+                type="button"
+                onClick={() => {
+                  setIsForgotPassword(true);
+                  setError(null);
+                  setSuccessMessage(null);
+                }}
+                className="text-sm text-primary-600 hover:text-primary-700 block w-full"
+                disabled={loading}
+              >
+                Forgot Password?
+              </button>
+            )}
+            
+            {isForgotPassword ? (
+              <button
+                type="button"
+                onClick={() => {
+                  setIsForgotPassword(false);
+                  setError(null);
+                  setSuccessMessage(null);
+                }}
+                className="text-sm text-primary-600 hover:text-primary-700"
+                disabled={loading}
+              >
+                Back to Sign In
+              </button>
+            ) : (
+              <button
+                type="button"
+                onClick={() => {
+                  setIsSignUp(!isSignUp);
+                  setError(null);
+                  setSuccessMessage(null);
+                }}
+                className="text-sm text-primary-600 hover:text-primary-700"
+                disabled={loading}
+              >
+                {isSignUp ? 'Already have an account? Sign In' : "Don't have an account? Sign Up"}
+              </button>
+            )}
           </div>
         </form>
 
         {/* Divider */}
-        <div className="relative my-6">
-          <div className="absolute inset-0 flex items-center">
-            <div className="w-full border-t border-gray-300"></div>
-          </div>
-          <div className="relative flex justify-center text-sm">
-            <span className="px-2 bg-white text-gray-500">Or continue with</span>
-          </div>
-        </div>
+        {!isForgotPassword && (
+          <>
+            <div className="relative my-6">
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t border-gray-300"></div>
+              </div>
+              <div className="relative flex justify-center text-sm">
+                <span className="px-2 bg-white text-gray-500">Or continue with</span>
+              </div>
+            </div>
 
-        {/* Google Sign In */}
-        <div className="space-y-4">
+            {/* Google Sign In */}
+            <div className="space-y-4">
           <button
             onClick={handleGoogleLogin}
             disabled={loading}
@@ -210,7 +278,9 @@ const Login = () => {
               </>
             )}
           </button>
-        </div>
+            </div>
+          </>
+        )}
 
         <div className="mt-8 text-center text-sm text-gray-500">
           <p>By signing in, you agree to our Terms of Service and Privacy Policy</p>
@@ -227,9 +297,6 @@ const Login = () => {
             </li>
             <li className="flex items-center">
               <span className="mr-2">✓</span> QR code check-in
-            </li>
-            <li className="flex items-center">
-              <span className="mr-2">✓</span> Secure payments
             </li>
           </ul>
         </div>
