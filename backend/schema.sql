@@ -26,6 +26,7 @@ CREATE TABLE parking_lots (
     address TEXT,
     description TEXT,
     total_slots INTEGER DEFAULT 0,
+    hourly_rate DECIMAL(10, 2) DEFAULT 50.00,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -50,6 +51,7 @@ CREATE TABLE bookings (
     vehicle_number VARCHAR(50) NOT NULL,
     status VARCHAR(20) DEFAULT 'booked' CHECK (status IN ('booked', 'cancelled', 'checked_in', 'completed')),
     qr_code_token TEXT,
+    total_amount DECIMAL(10, 2),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT valid_time_range CHECK (end_time > start_time)

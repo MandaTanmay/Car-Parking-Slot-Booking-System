@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { getBookingDetails, cancelBooking } from '../api/bookings';
 import Navbar from '../components/Navbar';
+import jsPDF from 'jspdf';
 
 const BookingPage = () => {
   const { bookingId } = useParams();
@@ -42,6 +43,69 @@ const BookingPage = () => {
 
   const formatDateTime = (dateString) => {
     return new Date(dateString).toLocaleString();
+  };
+
+  const calculateAmount = () => {
+    if (!booking) return 0;
+    const startTime = new Date(booking.start_time);
+    const endTime = new Date(booking.end_time);
+    const hours = Math.ceil((endTime - startTime) / (1000 * 60 * 60)); // Calculate hours
+    const hourlyRate = booking.hourly_rate || 50; // Default ₹50 per hour
+    return hours * hourlyRate;
+  };
+
+  const downloadBooking = () => {
+    const doc = new jsPDF();
+    
+    // Add title
+    doc.setFontSize(20);
+    doc.text('🚗 ParkEasy - Booking Receipt', 20, 20);
+    
+    // Add booking details
+    doc.setFontSize(12);
+    doc.text(`Booking ID: ${booking.id}`, 20, 40);
+    doc.text(`Status: ${booking.status.toUpperCase()}`, 20, 50);
+    doc.text('', 20, 60);
+    
+    // Parking Information
+    doc.setFontSize(14);
+    doc.text('Parking Information:', 20, 70);
+    doc.setFontSize(12);
+    doc.text(`Parking Lot: ${booking.parking_lot_name}`, 20, 80);
+    doc.text(`Address: ${booking.parking_lot_address}`, 20, 90);
+    doc.text(`Slot: ${booking.slot_code} (${booking.slot_type})`, 20, 100);
+    doc.text(`Vehicle: ${booking.vehicle_number}`, 20, 110);
+    doc.text('', 20, 120);
+    
+    // Time Details
+    doc.setFontSize(14);
+    doc.text('Time Details:', 20, 130);
+    doc.setFontSize(12);
+    doc.text(`Start: ${formatDateTime(booking.start_time)}`, 20, 140);
+    doc.text(`End: ${formatDateTime(booking.end_time)}`, 20, 150);
+    doc.text(`Booked On: ${formatDateTime(booking.created_at)}`, 20, 160);
+    doc.text('', 20, 170);
+    
+    // Payment Details
+    const amount = calculateAmount();
+    doc.setFontSize(14);
+    doc.text('Payment Details:', 20, 180);
+    doc.setFontSize(12);
+    const startTime = new Date(booking.start_time);
+    const endTime = new Date(booking.end_time);
+    const hours = Math.ceil((endTime - startTime) / (1000 * 60 * 60));
+    doc.text(`Duration: ${hours} hour(s)`, 20, 190);
+    doc.text(`Rate: ₹${booking.hourly_rate || 50}/hour`, 20, 200);
+    doc.setFontSize(16);
+    doc.text(`Total Amount: ₹${amount.toFixed(2)}`, 20, 215);
+    
+    // Footer
+    doc.setFontSize(10);
+    doc.text('Thank you for using ParkEasy!', 20, 270);
+    doc.text('For support, contact: support@parkeasy.com', 20, 280);
+    
+    // Save PDF
+    doc.save(`booking-${booking.id}.pdf`);
   };
 
   const getStatusColor = (status) => {
@@ -169,6 +233,37 @@ const BookingPage = () => {
             </div>
           </div>
 
+          {/* Payment Details */}
+          <div className="border-t pt-6 mt-6">
+            <h2 className="text-lg font-semibold text-gray-900 mb-4">
+              Payment Details
+            </h2>
+            <div className="bg-primary-50 rounded-lg p-6">
+              <div className="space-y-3">
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Duration</span>
+                  <span className="font-medium">
+                    {Math.ceil(
+                      (new Date(booking.end_time) - new Date(booking.start_time)) /
+                        (1000 * 60 * 60)
+                    )}{' '}
+                    hour(s)
+                  </span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Rate per Hour</span>
+                  <span className="font-medium">₹{booking.hourly_rate || 50}</span>
+                </div>
+                <div className="border-t pt-3 flex justify-between items-center">
+                  <span className="text-xl font-semibold text-gray-900">Total Amount</span>
+                  <span className="text-2xl font-bold text-primary-600">
+                    ₹{calculateAmount().toFixed(2)}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+
           {/* QR Code */}
           {booking.qr_code && booking.status !== 'cancelled' && (
             <div className="border-t pt-8">
@@ -189,13 +284,33 @@ const BookingPage = () => {
           )}
 
           {/* Actions */}
-          {booking.status === 'booked' && (
-            <div className="border-t pt-6 mt-8">
+          <div className="border-t pt-6 mt-8 space-y-4">
+            <button
+              onClick={downloadBooking}
+              className="w-full bg-green-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-green-700 transition-colors flex items-center justify-center"
+            >
+              <svg
+                className="w-5 h-5 mr-2"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                />
+              </svg>
+              Download Booking Details
+            </button>
+            
+            {booking.status === 'booked' && (
               <button onClick={handleCancelBooking} className="btn-danger w-full">
                 Cancel Booking
               </button>
-            </div>
-          )}
+            )}
+          </div>
         </div>
       </div>
     </div>

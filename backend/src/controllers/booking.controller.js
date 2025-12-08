@@ -64,7 +64,7 @@ export const getUserBookings = async (req, res) => {
     let queryText = `
       SELECT b.*, 
         s.slot_code, s.slot_type,
-        pl.name as parking_lot_name, pl.address as parking_lot_address
+        pl.name as parking_lot_name, pl.address as parking_lot_address, pl.hourly_rate
       FROM bookings b
       JOIN slots s ON b.slot_id = s.id
       JOIN parking_lots pl ON s.parking_lot_id = pl.id
@@ -99,7 +99,7 @@ export const getBookingDetails = async (req, res) => {
     const queryText = `
       SELECT b.*, 
         s.slot_code, s.slot_type,
-        pl.name as parking_lot_name, pl.address as parking_lot_address,
+        pl.name as parking_lot_name, pl.address as parking_lot_address, pl.hourly_rate,
         u.name as user_name, u.email as user_email
       FROM bookings b
       JOIN slots s ON b.slot_id = s.id
