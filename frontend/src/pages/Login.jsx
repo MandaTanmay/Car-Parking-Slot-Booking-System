@@ -7,7 +7,9 @@ const Login = () => {
   const [searchParams] = useSearchParams();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [isSignUp, setIsSignUp] = useState(false);
+  // Check URL parameter to determine if this is register mode
+  const mode = searchParams.get('mode');
+  const [isSignUp, setIsSignUp] = useState(mode === 'register');
   
   // Form state
   const [email, setEmail] = useState('');

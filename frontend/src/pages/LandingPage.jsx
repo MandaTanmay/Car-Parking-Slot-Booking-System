@@ -22,7 +22,7 @@ const LandingPage = () => {
                 Login
               </button>
               <button
-                onClick={() => navigate('/login')}
+                onClick={() => navigate('/login?mode=register')}
                 className="px-6 py-2 bg-primary-600 text-white rounded-lg font-medium hover:bg-primary-700 transition-colors shadow-sm"
               >
                 Get Started
@@ -45,7 +45,7 @@ const LandingPage = () => {
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <button
-              onClick={() => navigate('/login')}
+              onClick={() => navigate('/login?mode=register')}
               className="px-8 py-4 bg-primary-600 text-white text-lg rounded-lg font-semibold hover:bg-primary-700 transition-all transform hover:scale-105 shadow-lg"
             >
               Get Started Now
@@ -201,7 +201,7 @@ const LandingPage = () => {
             Join thousands of satisfied users who have made parking simple
           </p>
           <button
-            onClick={() => navigate('/login')}
+            onClick={() => navigate('/login?mode=register')}
             className="px-10 py-4 bg-white text-primary-600 text-lg rounded-lg font-semibold hover:bg-gray-100 transition-all transform hover:scale-105 shadow-xl"
           >
             Get Started Free
