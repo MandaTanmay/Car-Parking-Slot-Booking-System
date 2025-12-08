@@ -5,15 +5,21 @@ import { signInWithPopup, signOut, createUserWithEmailAndPassword, signInWithEma
 // Firebase Google Sign-In
 export const loginWithGoogle = async () => {
   try {
+    console.log('Starting Google login...');
+    
     // Sign in with Firebase
     const result = await signInWithPopup(auth, googleProvider);
     const user = result.user;
+    console.log('Firebase login successful, user:', user.email);
 
     // Get Firebase ID token
     const idToken = await user.getIdToken();
+    console.log('Got Firebase ID token');
 
     // Send ID token to backend for verification and JWT generation
+    console.log('Sending token to backend for verification...');
     const response = await api.post('/api/auth/firebase/verify', { idToken });
+    console.log('Backend verification successful:', response.data);
 
     // Store JWT token and user info
     localStorage.setItem('token', response.data.token);
@@ -25,6 +31,11 @@ export const loginWithGoogle = async () => {
     return response.data;
   } catch (error) {
     console.error('Login error:', error);
+    console.error('Error details:', {
+      message: error.message,
+      response: error.response?.data,
+      status: error.response?.status
+    });
     throw error;
   }
 };

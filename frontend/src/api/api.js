@@ -2,6 +2,12 @@ import axios from 'axios';
 
 const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
 
+console.log('🔧 API Configuration:', {
+  API_URL,
+  REACT_APP_API_URL: process.env.REACT_APP_API_URL,
+  environment: process.env.NODE_ENV
+});
+
 const api = axios.create({
   baseURL: API_URL,
   headers: {
@@ -28,9 +34,14 @@ api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
-      localStorage.removeItem('token');
-      localStorage.removeItem('user');
-      window.location.href = '/login';
+      // Don't redirect if we're already on login/auth endpoints to prevent loops
+      const isAuthEndpoint = error.config?.url?.includes('/auth/');
+      
+      if (!isAuthEndpoint) {
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        window.location.href = '/login';
+      }
     }
     return Promise.reject(error);
   }
