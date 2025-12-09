@@ -44,10 +44,11 @@ app.use('/api/admin', adminRoutes);
 app.get('/', (req, res) => {
   res.json({
     message: '🚗 ParkEasy API - Car Parking Slot Booking System',
-    version: '1.0.0',
+    version: '1.0.2',
     status: 'running',
     endpoints: {
       health: '/health',
+      dbHealth: '/health/db',
       auth: '/api/auth',
       bookings: '/api',
       admin: '/api/admin',
@@ -60,8 +61,29 @@ app.get('/health', (req, res) => {
   res.json({ 
     status: 'OK', 
     timestamp: new Date().toISOString(),
-    version: '1.0.1' 
+    version: '1.0.2' 
   });
+});
+
+// Database health check
+app.get('/health/db', async (req, res) => {
+  try {
+    const { query } = await import('./db.js');
+    const result = await query('SELECT NOW() as time, COUNT(*) as parking_lots FROM parking_lots');
+    res.json({ 
+      status: 'OK', 
+      database: 'connected',
+      timestamp: result.rows[0].time,
+      parkingLots: result.rows[0].parking_lots
+    });
+  } catch (error) {
+    console.error('Database health check failed:', error);
+    res.status(500).json({ 
+      status: 'ERROR', 
+      database: 'disconnected',
+      error: error.message 
+    });
+  }
 });
 
 // Debug endpoint to check CORS configuration
