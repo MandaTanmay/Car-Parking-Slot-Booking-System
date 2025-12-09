@@ -34,11 +34,16 @@ try {
   } 
   // Alternative: Use base64 encoded service account
   else if (process.env.FIREBASE_SERVICE_ACCOUNT_BASE64) {
-    const base64String = process.env.FIREBASE_SERVICE_ACCOUNT_BASE64;
-    const jsonString = Buffer.from(base64String, 'base64').toString('utf-8');
-    serviceAccount = JSON.parse(jsonString);
-    
-    console.log('Using Firebase credentials from base64 environment variable');
+    try {
+      const base64String = process.env.FIREBASE_SERVICE_ACCOUNT_BASE64;
+      console.log('Base64 string length:', base64String?.length || 0);
+      const jsonString = Buffer.from(base64String, 'base64').toString('utf-8');
+      serviceAccount = JSON.parse(jsonString);
+      console.log('Firebase credentials loaded from base64, project:', serviceAccount.project_id);
+    } catch (error) {
+      console.error('Error parsing base64 Firebase credentials:', error.message);
+      throw error;
+    }
   }
   // Development: Use local file
   else if (process.env.FIREBASE_SERVICE_ACCOUNT_PATH) {
@@ -54,12 +59,16 @@ try {
     throw new Error('No Firebase credentials configured. Set environment variables or FIREBASE_SERVICE_ACCOUNT_PATH');
   }
 
+  if (!serviceAccount) {
+    throw new Error('No valid Firebase credentials found');
+  }
+
   firebaseApp = admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
     projectId: serviceAccount.project_id || process.env.FIREBASE_PROJECT_ID,
   });
   
-  console.log('Firebase Admin initialized successfully');
+  console.log('✅ Firebase Admin initialized successfully with project:', serviceAccount.project_id);
 } catch (error) {
   console.error('Error initializing Firebase Admin:', error.message);
   console.log('Note: Firebase Admin SDK requires proper credentials to be configured');

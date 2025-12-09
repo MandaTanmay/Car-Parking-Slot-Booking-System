@@ -8,6 +8,10 @@ dotenv.config();
 // Verify Firebase ID token and get/create user
 export const verifyFirebaseToken = async (idToken, providedName = null) => {
   try {
+    if (!firebaseAuth) {
+      throw new Error('Firebase Admin SDK not initialized');
+    }
+    
     // Verify the Firebase ID token
     const decodedToken = await firebaseAuth.verifyIdToken(idToken);
     const { uid, email, name, picture } = decodedToken;
