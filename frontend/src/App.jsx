@@ -10,6 +10,13 @@ import Dashboard from './pages/Dashboard';
 import ParkingLot from './pages/ParkingLot';
 import BookingPage from './pages/BookingPage';
 import AdminPanel from './pages/AdminPanel';
+import Features from './pages/Features';
+import Pricing from './pages/Pricing';
+import AboutUs from './pages/AboutUs';
+import Contact from './pages/Contact';
+import HelpCenter from './pages/HelpCenter';
+import TermsOfService from './pages/TermsOfService';
+import PrivacyPolicy from './pages/PrivacyPolicy';
 
 // Protected Route Component
 const ProtectedRoute = ({ children }) => {
@@ -41,6 +48,13 @@ function App() {
         <Route path="/" element={<LandingPage />} />
         <Route path="/login" element={<Login />} />
         <Route path="/adminlogin" element={<AdminLogin />} />
+        <Route path="/features" element={<Features />} />
+        <Route path="/pricing" element={<Pricing />} />
+        <Route path="/about" element={<AboutUs />} />
+        <Route path="/contact" element={<Contact />} />
+        <Route path="/help-center" element={<HelpCenter />} />
+        <Route path="/terms" element={<TermsOfService />} />
+        <Route path="/privacy" element={<PrivacyPolicy />} />
         
         <Route
           path="/dashboard"

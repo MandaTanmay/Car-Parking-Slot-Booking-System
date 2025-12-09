@@ -226,27 +226,27 @@ const LandingPage = () => {
             <div>
               <h4 className="text-lg font-semibold mb-4">Product</h4>
               <ul className="space-y-2 text-gray-400">
-                <li><a href="#" className="hover:text-white transition-colors">Features</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Pricing</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">How it Works</a></li>
+                <li><a href="/features" className="hover:text-white transition-colors cursor-pointer">Features</a></li>
+                <li><a href="/pricing" className="hover:text-white transition-colors cursor-pointer">Pricing</a></li>
+                <li><a href="/help-center" className="hover:text-white transition-colors cursor-pointer">How it Works</a></li>
               </ul>
             </div>
 
             <div>
               <h4 className="text-lg font-semibold mb-4">Company</h4>
               <ul className="space-y-2 text-gray-400">
-                <li><a href="#" className="hover:text-white transition-colors">About Us</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Contact</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Careers</a></li>
+                <li><a href="/about" className="hover:text-white transition-colors cursor-pointer">About Us</a></li>
+                <li><a href="/contact" className="hover:text-white transition-colors cursor-pointer">Contact</a></li>
+                <li><a href="/contact" className="hover:text-white transition-colors cursor-pointer">Careers</a></li>
               </ul>
             </div>
 
             <div>
               <h4 className="text-lg font-semibold mb-4">Support</h4>
               <ul className="space-y-2 text-gray-400">
-                <li><a href="#" className="hover:text-white transition-colors">Help Center</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Terms of Service</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Privacy Policy</a></li>
+                <li><a href="/help-center" className="hover:text-white transition-colors cursor-pointer">Help Center</a></li>
+                <li><a href="/terms" className="hover:text-white transition-colors cursor-pointer">Terms of Service</a></li>
+                <li><a href="/privacy" className="hover:text-white transition-colors cursor-pointer">Privacy Policy</a></li>
               </ul>
             </div>
           </div>

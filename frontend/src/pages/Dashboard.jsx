@@ -16,10 +16,9 @@ const Dashboard = () => {
   useEffect(() => {
     console.log('Dashboard: User accessing dashboard:', user);
     
-    // Redirect admin users to admin panel
-    if (user?.role === 'admin') {
-      console.log('Admin user detected, redirecting to admin panel');
-      navigate('/admin', { replace: true });
+    if (!user) {
+      console.log('No user found, redirecting to login');
+      navigate('/login', { replace: true });
       return;
     }
     
