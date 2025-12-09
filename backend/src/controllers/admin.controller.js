@@ -340,7 +340,7 @@ export const approveBooking = async (req, res) => {
   try {
     const result = await query(
       `UPDATE bookings 
-       SET status = 'approved', updated_at = CURRENT_TIMESTAMP
+       SET status = 'booked', updated_at = CURRENT_TIMESTAMP
        WHERE id = $1 AND status = 'pending'
        RETURNING *`,
       [bookingId]
@@ -350,10 +350,12 @@ export const approveBooking = async (req, res) => {
       return res.status(404).json({ error: 'Booking not found or already processed' });
     }
 
+    const booking = result.rows[0];
+
     // Get full booking details
     const bookingDetails = await query(
       `SELECT b.*, 
-        s.slot_code, s.slot_type,
+        s.slot_code, s.slot_type, s.parking_lot_id,
         pl.name as parking_lot_name,
         u.name as user_name, u.email as user_email
       FROM bookings b
@@ -364,25 +366,28 @@ export const approveBooking = async (req, res) => {
       [bookingId]
     );
 
+    const fullBooking = bookingDetails.rows[0];
+
     // Emit socket event
     const io = req.app.get('io');
-    if (io) {
-      io.to(`parking_lot_${booking.parking_lot_id}`).emit('slot_update', {
-        slotId: booking.slot_id,
-        parkingLotId: booking.parking_lot_id,
-        status: 'approved',
+    if (io && fullBooking) {
+      io.to(`parking_lot_${fullBooking.parking_lot_id}`).emit('slot_update', {
+        slotId: fullBooking.slot_id,
+        parkingLotId: fullBooking.parking_lot_id,
+        status: 'booked',
         bookingId,
       });
-      io.emit('booking_approved', { bookingId, booking });
+      io.emit('booking_approved', { bookingId, booking: fullBooking });
     }
 
     res.json({
-      booking,
+      booking: fullBooking || booking,
       message: 'Booking approved successfully',
     });
   } catch (error) {
     console.error('Error approving booking:', error);
-    res.status(500).json({ error: 'Failed to approve booking' });
+    console.error('Error details:', error.message);
+    res.status(500).json({ error: 'Failed to approve booking', details: error.message });
   }
 };
 
@@ -394,7 +399,7 @@ export const declineBooking = async (req, res) => {
   try {
     const result = await query(
       `UPDATE bookings 
-       SET status = 'declined', updated_at = CURRENT_TIMESTAMP
+       SET status = 'cancelled', updated_at = CURRENT_TIMESTAMP
        WHERE id = $1 AND status = 'pending'
        RETURNING *`,
       [bookingId]
@@ -407,7 +412,7 @@ export const declineBooking = async (req, res) => {
     // Get full booking details
     const bookingDetails = await query(
       `SELECT b.*, 
-        s.slot_code, s.slot_type,
+        s.slot_code, s.slot_type, s.parking_lot_id,
         pl.name as parking_lot_name,
         u.name as user_name, u.email as user_email
       FROM bookings b
@@ -420,15 +425,15 @@ export const declineBooking = async (req, res) => {
 
     // Emit socket event
     const io = req.app.get('io');
-    if (io) {
+    if (io && bookingDetails.rows.length > 0) {
       const booking = bookingDetails.rows[0];
       io.to(`parking_lot_${booking.parking_lot_id}`).emit('slot_update', {
         slotId: booking.slot_id,
         parkingLotId: booking.parking_lot_id,
-        status: 'declined',
+        status: 'cancelled',
         bookingId,
       });
-      io.emit('booking-declined', { booking, reason });
+      io.emit('booking_declined', { booking, reason });
     }
 
     res.json({
@@ -437,6 +442,7 @@ export const declineBooking = async (req, res) => {
     });
   } catch (error) {
     console.error('Error declining booking:', error);
-    res.status(500).json({ error: 'Failed to decline booking' });
+    console.error('Error details:', error.message);
+    res.status(500).json({ error: 'Failed to decline booking', details: error.message });
   }
 };
