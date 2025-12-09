@@ -3,8 +3,11 @@ import { useNavigate } from 'react-router-dom';
 import {
   getAllParkingLots,
   createParkingLot,
+  updateParkingLot,
+  deleteParkingLot,
   createSlot,
   updateSlot,
+  deleteSlot,
   getSlots,
   getAllBookings,
   getAnalytics,
@@ -26,9 +29,13 @@ const AdminPanel = () => {
 
   // Modal states
   const [showAddLotModal, setShowAddLotModal] = useState(false);
+  const [showEditLotModal, setShowEditLotModal] = useState(false);
   const [showAddSlotModal, setShowAddSlotModal] = useState(false);
-  const [newLot, setNewLot] = useState({ name: '', address: '', description: '' });
+  const [showEditSlotModal, setShowEditSlotModal] = useState(false);
+  const [newLot, setNewLot] = useState({ name: '', address: '', description: '', hourlyRate: '' });
+  const [editingLot, setEditingLot] = useState(null);
   const [newSlot, setNewSlot] = useState({ slotCode: '', slotType: 'car' });
+  const [editingSlot, setEditingSlot] = useState(null);
 
   const user = JSON.parse(localStorage.getItem('user') || 'null');
 
@@ -77,13 +84,52 @@ const AdminPanel = () => {
       const result = await createParkingLot(newLot);
       console.log('Parking lot created:', result);
       setShowAddLotModal(false);
-      setNewLot({ name: '', address: '', description: '' });
+      setNewLot({ name: '', address: '', description: '', hourlyRate: '' });
       fetchData();
       alert('Parking lot created successfully');
     } catch (err) {
       console.error('Error creating parking lot:', err);
       console.error('Error response:', err.response);
       const errorMsg = err.response?.data?.error || err.message || 'Failed to create parking lot';
+      setError(errorMsg);
+      alert('Error: ' + errorMsg);
+    }
+  };
+
+  const handleEditParkingLot = async () => {
+    if (!editingLot) return;
+    try {
+      await updateParkingLot(editingLot.id, {
+        name: editingLot.name,
+        address: editingLot.address,
+        description: editingLot.description,
+        hourlyRate: editingLot.hourly_rate
+      });
+      setShowEditLotModal(false);
+      setEditingLot(null);
+      fetchData();
+      alert('Parking lot updated successfully');
+    } catch (err) {
+      const errorMsg = err.response?.data?.error || 'Failed to update parking lot';
+      setError(errorMsg);
+      alert('Error: ' + errorMsg);
+    }
+  };
+
+  const handleDeleteParkingLot = async (lotId, lotName) => {
+    if (!window.confirm(`Are you sure you want to delete "${lotName}"? This will delete all slots and bookings associated with it.`)) {
+      return;
+    }
+    try {
+      await deleteParkingLot(lotId);
+      if (selectedLot?.id === lotId) {
+        setSelectedLot(null);
+        setSlots([]);
+      }
+      fetchData();
+      alert('Parking lot deleted successfully');
+    } catch (err) {
+      const errorMsg = err.response?.data?.error || 'Failed to delete parking lot';
       setError(errorMsg);
       alert('Error: ' + errorMsg);
     }
@@ -123,6 +169,35 @@ const AdminPanel = () => {
       alert('Slot updated successfully');
     } catch (err) {
       setError(err.response?.data?.error || 'Failed to update slot');
+    }
+  };
+
+  const handleEditSlot = async () => {
+    if (!editingSlot) return;
+    try {
+      await updateSlot(editingSlot.id, {
+        slotCode: editingSlot.slot_code,
+        slotType: editingSlot.slot_type
+      });
+      setShowEditSlotModal(false);
+      setEditingSlot(null);
+      handleSelectLot(selectedLot);
+      alert('Slot updated successfully');
+    } catch (err) {
+      setError(err.response?.data?.error || 'Failed to update slot');
+    }
+  };
+
+  const handleDeleteSlot = async (slotId, slotCode) => {
+    if (!window.confirm(`Are you sure you want to delete slot "${slotCode}"?`)) {
+      return;
+    }
+    try {
+      await deleteSlot(slotId);
+      handleSelectLot(selectedLot);
+      alert('Slot deleted successfully');
+    } catch (err) {
+      setError(err.response?.data?.error || 'Failed to delete slot');
     }
   };
 
@@ -343,17 +418,41 @@ const AdminPanel = () => {
                   {parkingLots.map((lot) => (
                     <div
                       key={lot.id}
-                      onClick={() => handleSelectLot(lot)}
-                      className={`p-4 border rounded-lg cursor-pointer hover:shadow-md transition ${
+                      className={`p-4 border rounded-lg hover:shadow-md transition ${
                         selectedLot?.id === lot.id ? 'border-primary-500 bg-primary-50' : ''
                       }`}
                     >
-                      <h4 className="font-semibold">{lot.name}</h4>
-                      <p className="text-sm text-gray-600">{lot.address}</p>
-                      <div className="mt-2 flex space-x-4 text-sm">
-                        <span>Total: {lot.total_slots}</span>
-                        <span className="text-green-600">Active: {lot.active_slots}</span>
-                        <span className="text-gray-500">Inactive: {lot.inactive_slots}</span>
+                      <div className="flex justify-between items-start">
+                        <div className="flex-1 cursor-pointer" onClick={() => handleSelectLot(lot)}>
+                          <h4 className="font-semibold">{lot.name}</h4>
+                          <p className="text-sm text-gray-600">{lot.address}</p>
+                          <div className="mt-2 flex space-x-4 text-sm">
+                            <span>Total: {lot.total_slots}</span>
+                            <span className="text-green-600">Active: {lot.active_slots}</span>
+                            <span className="text-gray-500">Inactive: {lot.inactive_slots}</span>
+                          </div>
+                        </div>
+                        <div className="flex flex-col space-y-2 ml-2">
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setEditingLot(lot);
+                              setShowEditLotModal(true);
+                            }}
+                            className="px-3 py-1 text-sm bg-blue-500 text-white rounded hover:bg-blue-600"
+                          >
+                            Edit
+                          </button>
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleDeleteParkingLot(lot.id, lot.name);
+                            }}
+                            className="px-3 py-1 text-sm bg-red-500 text-white rounded hover:bg-red-600"
+                          >
+                            Delete
+                          </button>
+                        </div>
                       </div>
                     </div>
                   ))}
@@ -379,24 +478,41 @@ const AdminPanel = () => {
                       {slots.map((slot) => (
                         <div
                           key={slot.id}
-                          className={`p-3 border rounded-lg text-center ${
+                          className={`p-3 border rounded-lg ${
                             slot.is_active ? 'bg-white' : 'bg-gray-100'
                           }`}
                         >
-                          <div className="font-semibold">{slot.slot_code}</div>
-                          <div className="text-xs text-gray-600 mt-1">
+                          <div className="font-semibold text-center">{slot.slot_code}</div>
+                          <div className="text-xs text-gray-600 mt-1 text-center">
                             {slot.slot_type}
                           </div>
-                          <button
-                            onClick={() => handleToggleSlot(slot)}
-                            className={`mt-2 text-xs px-2 py-1 rounded ${
-                              slot.is_active
-                                ? 'bg-red-100 text-red-600'
-                                : 'bg-green-100 text-green-600'
-                            }`}
-                          >
-                            {slot.is_active ? 'Deactivate' : 'Activate'}
-                          </button>
+                          <div className="mt-2 flex flex-col space-y-1">
+                            <button
+                              onClick={() => handleToggleSlot(slot)}
+                              className={`text-xs px-2 py-1 rounded ${
+                                slot.is_active
+                                  ? 'bg-red-100 text-red-600 hover:bg-red-200'
+                                  : 'bg-green-100 text-green-600 hover:bg-green-200'
+                              }`}
+                            >
+                              {slot.is_active ? 'Deactivate' : 'Activate'}
+                            </button>
+                            <button
+                              onClick={() => {
+                                setEditingSlot(slot);
+                                setShowEditSlotModal(true);
+                              }}
+                              className="text-xs px-2 py-1 rounded bg-blue-100 text-blue-600 hover:bg-blue-200"
+                            >
+                              Edit
+                            </button>
+                            <button
+                              onClick={() => handleDeleteSlot(slot.id, slot.slot_code)}
+                              className="text-xs px-2 py-1 rounded bg-gray-200 text-gray-700 hover:bg-gray-300"
+                            >
+                              Delete
+                            </button>
+                          </div>
                         </div>
                       ))}
                     </div>
@@ -553,6 +669,114 @@ const AdminPanel = () => {
                 </button>
                 <button onClick={handleAddSlot} className="btn-primary flex-1">
                   Create
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Edit Parking Lot Modal */}
+        {showEditLotModal && editingLot && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+            <div className="bg-white rounded-lg max-w-md w-full p-6">
+              <h3 className="text-xl font-bold mb-4">Edit Parking Lot</h3>
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium mb-2">Name *</label>
+                  <input
+                    type="text"
+                    value={editingLot.name}
+                    onChange={(e) => setEditingLot({ ...editingLot, name: e.target.value })}
+                    className="input-field"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-2">Address</label>
+                  <input
+                    type="text"
+                    value={editingLot.address || ''}
+                    onChange={(e) => setEditingLot({ ...editingLot, address: e.target.value })}
+                    className="input-field"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-2">Description</label>
+                  <textarea
+                    value={editingLot.description || ''}
+                    onChange={(e) => setEditingLot({ ...editingLot, description: e.target.value })}
+                    className="input-field"
+                    rows="3"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-2">Hourly Rate (₹)</label>
+                  <input
+                    type="number"
+                    value={editingLot.hourly_rate || ''}
+                    onChange={(e) => setEditingLot({ ...editingLot, hourly_rate: e.target.value })}
+                    className="input-field"
+                  />
+                </div>
+              </div>
+              <div className="flex space-x-4 mt-6">
+                <button
+                  onClick={() => {
+                    setShowEditLotModal(false);
+                    setEditingLot(null);
+                  }}
+                  className="btn-secondary flex-1"
+                >
+                  Cancel
+                </button>
+                <button onClick={handleEditParkingLot} className="btn-primary flex-1">
+                  Save Changes
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Edit Slot Modal */}
+        {showEditSlotModal && editingSlot && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+            <div className="bg-white rounded-lg max-w-md w-full p-6">
+              <h3 className="text-xl font-bold mb-4">Edit Slot</h3>
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium mb-2">Slot Code *</label>
+                  <input
+                    type="text"
+                    value={editingSlot.slot_code}
+                    onChange={(e) => setEditingSlot({ ...editingSlot, slot_code: e.target.value })}
+                    className="input-field"
+                    placeholder="e.g., A1, B2"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-2">Slot Type *</label>
+                  <select
+                    value={editingSlot.slot_type}
+                    onChange={(e) => setEditingSlot({ ...editingSlot, slot_type: e.target.value })}
+                    className="input-field"
+                  >
+                    <option value="car">Car</option>
+                    <option value="bike">Bike</option>
+                    <option value="ev">EV</option>
+                  </select>
+                </div>
+              </div>
+              <div className="flex space-x-4 mt-6">
+                <button
+                  onClick={() => {
+                    setShowEditSlotModal(false);
+                    setEditingSlot(null);
+                  }}
+                  className="btn-secondary flex-1"
+                >
+                  Cancel
+                </button>
+                <button onClick={handleEditSlot} className="btn-primary flex-1">
+                  Save Changes
                 </button>
               </div>
             </div>
