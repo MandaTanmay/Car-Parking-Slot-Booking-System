@@ -49,7 +49,7 @@ CREATE TABLE bookings (
     start_time TIMESTAMP NOT NULL,
     end_time TIMESTAMP NOT NULL,
     vehicle_number VARCHAR(50) NOT NULL,
-    status VARCHAR(20) DEFAULT 'booked' CHECK (status IN ('booked', 'cancelled', 'checked_in', 'completed')),
+    status VARCHAR(20) DEFAULT 'pending' CHECK (status IN ('pending', 'booked', 'cancelled', 'checked_in', 'completed')),
     qr_code_token TEXT,
     total_amount DECIMAL(10, 2),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,

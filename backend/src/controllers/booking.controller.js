@@ -181,25 +181,47 @@ export const createBooking = async (req, res) => {
       );
 
       if (slotCheck.rows.length === 0) {
+        console.log('❌ Slot not found:', slotId);
         throw new Error('Slot not found');
       }
 
       if (!slotCheck.rows[0].is_active) {
+        console.log('❌ Slot is not active:', slotId);
         throw new Error('Slot is not active');
       }
 
-      // Check for conflicting bookings
+      // Check for conflicting bookings (approved/checked-in only, allow multiple pending requests)
       const conflictCheck = await client.query(
         `SELECT id FROM bookings
          WHERE slot_id = $1
-         AND status IN ('pending', 'booked', 'checked_in')
+         AND status IN ('booked', 'checked_in')
          AND NOT (end_time <= $2 OR start_time >= $3)
          FOR UPDATE`,
         [slotId, startTime, endTime]
       );
 
+      console.log('Conflict check - approved/checked-in bookings:', conflictCheck.rows.length);
+
       if (conflictCheck.rows.length > 0) {
+        console.log('❌ Slot already has approved booking:', conflictCheck.rows[0].id);
         throw new Error('Slot is already booked for the selected time period');
+      }
+
+      // Check if this user already has a pending request for this slot at this time
+      const userPendingCheck = await client.query(
+        `SELECT id FROM bookings
+         WHERE slot_id = $1
+         AND user_id = $2
+         AND status = 'pending'
+         AND NOT (end_time <= $3 OR start_time >= $4)`,
+        [slotId, userId, startTime, endTime]
+      );
+
+      console.log('User pending check:', userPendingCheck.rows.length);
+
+      if (userPendingCheck.rows.length > 0) {
+        console.log('❌ User already has pending request:', userPendingCheck.rows[0].id);
+        throw new Error('You already have a pending request for this slot at this time');
       }
 
       // Create booking with pending status for admin approval
@@ -259,7 +281,7 @@ export const createBooking = async (req, res) => {
     console.error('Error message:', error.message);
     console.error('Error stack:', error.stack);
     
-    if (error.message.includes('already booked')) {
+    if (error.message.includes('already')) {
       return res.status(409).json({ error: error.message });
     }
     
@@ -267,7 +289,16 @@ export const createBooking = async (req, res) => {
       return res.status(400).json({ error: error.message });
     }
 
-    res.status(500).json({ error: 'Failed to create booking' });
+    if (error.message.includes('pending request')) {
+      return res.status(409).json({ error: error.message });
+    }
+
+    // Return the actual error message for debugging
+    res.status(500).json({ 
+      error: 'Failed to create booking', 
+      details: error.message,
+      hint: 'Check server logs for more information'
+    });
   }
 };
 

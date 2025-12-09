@@ -140,7 +140,16 @@ const ParkingLot = () => {
     } catch (err) {
       console.error('❌ Booking error:', err);
       console.error('Error response:', err.response);
-      const errorMsg = err.response?.data?.error || err.message || 'Failed to create booking';
+      console.error('Error response data:', err.response?.data);
+      
+      const errorData = err.response?.data;
+      let errorMsg = errorData?.error || err.message || 'Failed to create booking';
+      
+      // If there are additional details, show them
+      if (errorData?.details) {
+        errorMsg += ` (${errorData.details})`;
+      }
+      
       setError(errorMsg);
       alert('Error: ' + errorMsg);
     }
