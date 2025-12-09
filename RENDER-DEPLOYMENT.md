@@ -21,15 +21,20 @@ JWT_SECRET=92db50adfb768d0040fdfa75bf949d45ff39ebc1e2aa0b0425d55e1b3eb0509ae9a0d
 FRONTEND_URL=https://car-parking-slot-booking-system-gold.vercel.app
 ```
 
-### Firebase Configuration
+### Firebase Configuration (EASIEST METHOD - Use Base64)
+
+**Run this command locally to get your base64 encoded credentials:**
+```bash
+cd backend
+node encode-firebase-credentials.js
 ```
-FIREBASE_PROJECT_ID=project-c-4b503
-FIREBASE_PRIVATE_KEY_ID=<from firebase-service-account.json>
-FIREBASE_PRIVATE_KEY=<from firebase-service-account.json - entire private key with \n>
-FIREBASE_CLIENT_EMAIL=<from firebase-service-account.json>
-FIREBASE_CLIENT_ID=<from firebase-service-account.json>
-FIREBASE_CERT_URL=<from firebase-service-account.json>
+
+Then add this single environment variable on Render:
 ```
+FIREBASE_SERVICE_ACCOUNT_BASE64=<paste the base64 string from the command output>
+```
+
+This is much simpler than setting individual Firebase variables!
 
 ---
 
