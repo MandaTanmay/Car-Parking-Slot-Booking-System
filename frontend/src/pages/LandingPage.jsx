@@ -76,7 +76,7 @@ const LandingPage = () => {
               <div className="text-center">
                 <div className="text-5xl mb-4">💳</div>
                 <h3 className="text-xl font-semibold mb-2">Pay Securely</h3>
-                <p className="text-primary-100">Contactless payment with multiple secure options</p>
+                <p className="text-primary-100">Enjoy contactless payment with multiple secure options for a safe and hassle-free experience</p>
               </div>
             </div>
           </div>
@@ -124,7 +124,7 @@ const LandingPage = () => {
               <div className="text-4xl mb-4">💰</div>
               <h3 className="text-xl font-semibold text-gray-900 mb-3">Best Prices</h3>
               <p className="text-gray-600">
-                Compare prices and choose the parking option that fits your budget
+                Transparent pricing at just ₹50 per hour - affordable parking without hidden fees
               </p>
             </div>
 
@@ -184,7 +184,7 @@ const LandingPage = () => {
               </div>
               <h3 className="text-2xl font-semibold text-gray-900 mb-4">Park & Pay</h3>
               <p className="text-gray-600">
-                Arrive at your reserved spot, park your vehicle, and pay securely online
+                Simply arrive at your reserved spot, park your vehicle, and complete the payment securely through our platform
               </p>
             </div>
           </div>
@@ -209,53 +209,7 @@ const LandingPage = () => {
         </div>
       </div>
 
-      {/* Footer */}
-      <footer className="bg-gray-900 text-white py-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid md:grid-cols-4 gap-8">
-            <div>
-              <div className="flex items-center mb-4">
-                <span className="text-3xl">🚗</span>
-                <span className="ml-2 text-2xl font-bold">ParkEasy</span>
-              </div>
-              <p className="text-gray-400">
-                Making parking simple, fast, and hassle-free for everyone.
-              </p>
-            </div>
 
-            <div>
-              <h4 className="text-lg font-semibold mb-4">Product</h4>
-              <ul className="space-y-2 text-gray-400">
-                <li><a href="/features" className="hover:text-white transition-colors cursor-pointer">Features</a></li>
-                <li><a href="/pricing" className="hover:text-white transition-colors cursor-pointer">Pricing</a></li>
-                <li><a href="/help-center" className="hover:text-white transition-colors cursor-pointer">How it Works</a></li>
-              </ul>
-            </div>
-
-            <div>
-              <h4 className="text-lg font-semibold mb-4">Company</h4>
-              <ul className="space-y-2 text-gray-400">
-                <li><a href="/about" className="hover:text-white transition-colors cursor-pointer">About Us</a></li>
-                <li><a href="/contact" className="hover:text-white transition-colors cursor-pointer">Contact</a></li>
-                <li><a href="/contact" className="hover:text-white transition-colors cursor-pointer">Careers</a></li>
-              </ul>
-            </div>
-
-            <div>
-              <h4 className="text-lg font-semibold mb-4">Support</h4>
-              <ul className="space-y-2 text-gray-400">
-                <li><a href="/help-center" className="hover:text-white transition-colors cursor-pointer">Help Center</a></li>
-                <li><a href="/terms" className="hover:text-white transition-colors cursor-pointer">Terms of Service</a></li>
-                <li><a href="/privacy" className="hover:text-white transition-colors cursor-pointer">Privacy Policy</a></li>
-              </ul>
-            </div>
-          </div>
-
-          <div className="border-t border-gray-800 mt-12 pt-8 text-center text-gray-400">
-            <p>&copy; 2025 ParkEasy. All rights reserved.</p>
-          </div>
-        </div>
-      </footer>
     </div>
   );
 };

@@ -8,17 +8,25 @@ const router = express.Router();
 // Frontend sends Firebase ID token, backend verifies and returns JWT
 router.post('/firebase/verify', async (req, res) => {
   try {
+    console.log('🔐 Firebase verify request received');
     const { idToken, name } = req.body;
 
     if (!idToken) {
+      console.error('❌ No idToken provided in request body');
       return res.status(400).json({ error: 'Firebase ID token required' });
     }
 
+    console.log('✅ idToken received, length:', idToken.length);
+    console.log('📝 Provided name:', name || 'none');
+
     // Verify Firebase token and get/create user
+    console.log('🔍 Verifying Firebase token...');
     const user = await verifyFirebaseToken(idToken, name);
+    console.log('✅ User verified:', user.email);
 
     // Generate our own JWT for API access
     const token = generateToken(user);
+    console.log('🎫 JWT generated for user:', user.id);
 
     res.json({
       token,
@@ -30,7 +38,8 @@ router.post('/firebase/verify', async (req, res) => {
       },
     });
   } catch (error) {
-    console.error('Firebase auth error:', error);
+    console.error('❌ Firebase auth error:', error.message);
+    console.error('Error stack:', error.stack);
     res.status(401).json({ error: 'Authentication failed: ' + error.message });
   }
 });

@@ -14,6 +14,7 @@ const ParkingLot = () => {
   const [showBookingModal, setShowBookingModal] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [slotsLoaded, setSlotsLoaded] = useState(false);
   const [bookingData, setBookingData] = useState({
     startTime: '',
     endTime: '',
@@ -60,6 +61,11 @@ const ParkingLot = () => {
     const { startTime, endTime } = bookingData;
     const slotsData = await getSlotsByParkingLot(lotId, startTime, endTime);
     setSlots(slotsData.slots);
+    setSlotsLoaded(true);
+    // Scroll to slots section after loading
+    setTimeout(() => {
+      document.getElementById('slots-section')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 100);
     return slotsData;
   };
 
@@ -149,7 +155,26 @@ const ParkingLot = () => {
       const durationHours = durationMs / (1000 * 60 * 60);
       
       if (durationHours < 1) {
-        alert('⚠️ Minimum parking time is 1 hour\n\nPlease select an end time that is at least 1 hour after the start time.');
+        // Show popup warning
+        const popup = document.createElement('div');
+        popup.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
+        popup.innerHTML = `
+          <div class="bg-white rounded-lg p-6 max-w-md mx-4 shadow-xl">
+            <div class="text-center">
+              <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100 mb-4">
+                <svg class="h-6 w-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                </svg>
+              </div>
+              <h3 class="text-lg font-semibold text-gray-900 mb-2">Minimum Parking Time Required</h3>
+              <p class="text-gray-600 mb-4">Please select an end time that is at least <strong>1 hour</strong> after the start time.</p>
+              <button onclick="this.parentElement.parentElement.parentElement.remove()" class="btn-primary w-full">
+                Got it
+              </button>
+            </div>
+          </div>
+        `;
+        document.body.appendChild(popup);
         return;
       }
       
@@ -181,23 +206,36 @@ const ParkingLot = () => {
         {/* Parking Lot Info */}
         {parkingLot && (
           <div className="card mb-8">
+            {/* Back Button */}
+            <button
+              onClick={() => navigate(-1)}
+              className="mb-4 flex items-center text-primary-600 hover:text-primary-700 font-medium transition-colors"
+            >
+              <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+              </svg>
+              Back to Dashboard
+            </button>
+            
             <h1 className="text-3xl font-bold text-gray-900 mb-2">
               {parkingLot.name}
             </h1>
             <p className="text-gray-600">{parkingLot.address}</p>
-            <div className="mt-4 flex space-x-8">
+            <div className="mt-4">
               <div>
                 <p className="text-sm text-gray-500">Total Slots</p>
                 <p className="text-2xl font-bold text-primary-600">
                   {parkingLot.total_slots || 0}
                 </p>
               </div>
-              <div>
-                <p className="text-sm text-gray-500">Available Now</p>
-                <p className="text-2xl font-bold text-green-600">
-                  {slots.filter((s) => s.is_available && s.is_active).length}
-                </p>
-              </div>
+              {slotsLoaded && (
+                <div className="mt-4">
+                  <p className="text-sm text-gray-500">Available for Selected Time</p>
+                  <p className="text-2xl font-bold text-green-600">
+                    {slots.filter((s) => s.is_available && s.is_active).length}
+                  </p>
+                </div>
+              )}
             </div>
           </div>
         )}
@@ -299,17 +337,30 @@ const ParkingLot = () => {
         </div>
 
         {/* Slots Grid */}
-        <div className="card">
-          <h2 className="text-xl font-semibold mb-6">Available Slots</h2>
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
-            {slots.map((slot) => (
-              <SlotCard
-                key={slot.id}
-                slot={slot}
-                onSelect={handleSlotSelect}
-                isSelected={selectedSlot?.id === slot.id}
-              />
-            ))}
+        <div id="slots-section" className="card">
+          <h2 className="text-xl font-semibold mb-6">
+            {slotsLoaded ? 'Available Slots' : 'Select time above to view available slots'}
+          </h2>
+          {slotsLoaded ? (
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
+              {slots.map((slot) => (
+                <SlotCard
+                  key={slot.id}
+                  slot={slot}
+                  onSelect={handleSlotSelect}
+                  isSelected={selectedSlot?.id === slot.id}
+                />
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-12 text-gray-500">
+              <svg className="mx-auto h-12 w-12 text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <p className="text-lg font-medium">Please select your parking time first</p>
+              <p className="text-sm mt-2">Choose start and end times above, then click "Check Available Slots"</p>
+            </div>
+          )}
           </div>
         </div>
 

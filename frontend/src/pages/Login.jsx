@@ -281,25 +281,6 @@ const Login = () => {
             </div>
           </>
         )}
-
-        <div className="mt-8 text-center text-sm text-gray-500">
-          <p>By signing in, you agree to our Terms of Service and Privacy Policy</p>
-        </div>
-
-        <div className="mt-8 border-t pt-6">
-          <h3 className="font-semibold text-gray-700 mb-3">Features:</h3>
-          <ul className="space-y-2 text-sm text-gray-600">
-            <li className="flex items-center">
-              <span className="mr-2">✓</span> Real-time slot availability
-            </li>
-            <li className="flex items-center">
-              <span className="mr-2">✓</span> Easy online booking
-            </li>
-            <li className="flex items-center">
-              <span className="mr-2">✓</span> QR code check-in
-            </li>
-          </ul>
-        </div>
       </div>
     </div>
   );

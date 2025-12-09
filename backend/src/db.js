@@ -4,37 +4,34 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-// Supabase PostgreSQL connection pool
-// Supabase connection string format: postgresql://postgres:[YOUR-PASSWORD]@db.[PROJECT-REF].supabase.co:5432/postgres
+// PostgreSQL connection pool
+// Use DATABASE_URL if available (for Render/production), otherwise use individual variables (local)
 const pool = new Pool(
   process.env.DATABASE_URL
     ? {
         connectionString: process.env.DATABASE_URL,
         ssl: {
-          rejectUnauthorized: false, // Required for Supabase and cloud PostgreSQL
+          rejectUnauthorized: false, // Required for Render PostgreSQL
         },
         max: 20,
         idleTimeoutMillis: 30000,
-        connectionTimeoutMillis: 5000,
+        connectionTimeoutMillis: 2000,
       }
     : {
-        host: process.env.DB_HOST || 'db.mhsbgosushpbxndyakdz.supabase.co',
-        port: process.env.DB_PORT || 5432,
-        database: process.env.DB_NAME || 'postgres',
-        user: process.env.DB_USER || 'postgres',
+        host: process.env.DB_HOST,
+        port: process.env.DB_PORT,
+        database: process.env.DB_NAME,
+        user: process.env.DB_USER,
         password: process.env.DB_PASSWORD,
-        ssl: {
-          rejectUnauthorized: false,
-        },
         max: 20,
         idleTimeoutMillis: 30000,
-        connectionTimeoutMillis: 5000,
+        connectionTimeoutMillis: 2000,
       }
 );
 
 // Test database connection
 pool.on('connect', () => {
-  console.log('✅ Connected to Supabase PostgreSQL database');
+  console.log('✅ Connected to PostgreSQL database');
 });
 
 pool.on('error', (err) => {
