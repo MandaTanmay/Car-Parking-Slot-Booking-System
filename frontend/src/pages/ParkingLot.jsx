@@ -361,7 +361,6 @@ const ParkingLot = () => {
               <p className="text-sm mt-2">Choose start and end times above, then click "Check Available Slots"</p>
             </div>
           )}
-          </div>
         </div>
 
         {/* Booking Modal */}
