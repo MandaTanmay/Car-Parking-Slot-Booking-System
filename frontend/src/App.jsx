@@ -17,6 +17,7 @@ import Contact from './pages/Contact';
 import HelpCenter from './pages/HelpCenter';
 import TermsOfService from './pages/TermsOfService';
 import PrivacyPolicy from './pages/PrivacyPolicy';
+import QRScanner from './pages/QRScanner';
 
 // Protected Route Component
 const ProtectedRoute = ({ children }) => {
@@ -48,6 +49,7 @@ function App() {
         <Route path="/" element={<LandingPage />} />
         <Route path="/login" element={<Login />} />
         <Route path="/adminlogin" element={<AdminLogin />} />
+        <Route path="/qr-scanner" element={<QRScanner />} />
         <Route path="/features" element={<Features />} />
         <Route path="/pricing" element={<Pricing />} />
         <Route path="/about" element={<AboutUs />} />

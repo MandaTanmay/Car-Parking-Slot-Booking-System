@@ -335,6 +335,51 @@ export const cancelBooking = async (req, res) => {
   }
 };
 
+// Get booking details from QR code (for viewing)
+export const getBookingFromQR = async (req, res) => {
+  const { qrToken } = req.query;
+
+  if (!qrToken) {
+    return res.status(400).json({ error: 'QR token required' });
+  }
+
+  try {
+    const { verifyToken } = await import('../auth.js');
+    const decoded = verifyToken(qrToken);
+
+    if (decoded.type !== 'qr_checkin') {
+      return res.status(400).json({ error: 'Invalid QR code type' });
+    }
+
+    const result = await query(
+      `SELECT b.*, 
+              s.slot_code, s.slot_type,
+              pl.name as parking_lot_name, pl.address as parking_lot_address, pl.hourly_rate,
+              u.name as user_name, u.email as user_email
+       FROM bookings b
+       JOIN slots s ON b.slot_id = s.id
+       JOIN parking_lots pl ON s.parking_lot_id = pl.id
+       JOIN users u ON b.user_id = u.id
+       WHERE b.id = $1`,
+      [decoded.bookingId]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'Booking not found' });
+    }
+
+    res.json({ booking: result.rows[0] });
+  } catch (error) {
+    console.error('Error getting booking from QR:', error);
+
+    if (error.message.includes('Invalid') || error.message.includes('expired')) {
+      return res.status(403).json({ error: 'Invalid or expired QR code' });
+    }
+
+    res.status(500).json({ error: 'Failed to get booking details' });
+  }
+};
+
 // Check-in with QR code
 export const checkInWithQR = async (req, res) => {
   const { qrToken } = req.body;

@@ -25,6 +25,9 @@ router.post('/bookings', bookingController.createBooking);
 // Cancel booking
 router.patch('/bookings/:bookingId/cancel', bookingController.cancelBooking);
 
+// Get booking from QR code (public endpoint for viewing)
+router.get('/bookings/qr/view', bookingController.getBookingFromQR);
+
 // Check-in with QR code
 router.post('/bookings/check-in', bookingController.checkInWithQR);
 

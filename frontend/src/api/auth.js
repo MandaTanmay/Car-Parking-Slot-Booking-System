@@ -7,18 +7,26 @@ export const loginWithGoogle = async () => {
   try {
     console.log('Starting Google login...');
     
+    // Configure popup settings to avoid CORS issues
+    googleProvider.setCustomParameters({
+      prompt: 'select_account'
+    });
+
     // Sign in with Firebase
     const result = await signInWithPopup(auth, googleProvider);
     const user = result.user;
     console.log('Firebase login successful, user:', user.email);
 
     // Get Firebase ID token
-    const idToken = await user.getIdToken();
+    const idToken = await user.getIdToken(true); // Force refresh
     console.log('Got Firebase ID token');
 
     // Send ID token to backend for verification and JWT generation
     console.log('Sending token to backend for verification...');
-    const response = await api.post('/api/auth/firebase/verify', { idToken });
+    const response = await api.post('/api/auth/firebase/verify', { 
+      idToken,
+      name: user.displayName 
+    });
     console.log('Backend verification successful:', response.data);
 
     // Store JWT token and user info
@@ -36,6 +44,18 @@ export const loginWithGoogle = async () => {
       response: error.response?.data,
       status: error.response?.status
     });
+    
+    // Provide user-friendly error messages
+    if (error.response?.status === 401) {
+      throw new Error('Authentication failed. Please try again or contact support.');
+    }
+    if (error.code === 'auth/popup-blocked') {
+      throw new Error('Popup was blocked. Please allow popups for this site and try again.');
+    }
+    if (error.code === 'auth/popup-closed-by-user') {
+      throw new Error('Login cancelled. Please try again.');
+    }
+    
     throw error;
   }
 };
