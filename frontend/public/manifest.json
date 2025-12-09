@@ -1,0 +1,16 @@
+{
+  "short_name": "ParkEasy",
+  "name": "ParkEasy - Car Parking Booking",
+  "description": "Smart car parking slot booking with real-time availability",
+  "icons": [
+    {
+      "src": "favicon.svg",
+      "type": "image/svg+xml",
+      "sizes": "any"
+    }
+  ],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#2563eb",
+  "background_color": "#ffffff"
+}
