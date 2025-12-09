@@ -142,6 +142,17 @@ const ParkingLot = () => {
 
   const handleTimeChange = async () => {
     if (bookingData.startTime && bookingData.endTime) {
+      // Validate minimum 1 hour duration
+      const startDate = new Date(bookingData.startTime);
+      const endDate = new Date(bookingData.endTime);
+      const durationMs = endDate - startDate;
+      const durationHours = durationMs / (1000 * 60 * 60);
+      
+      if (durationHours < 1) {
+        alert('⚠️ Minimum parking time is 1 hour\n\nPlease select an end time that is at least 1 hour after the start time.');
+        return;
+      }
+      
       await fetchSlots();
     }
   };
