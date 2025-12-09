@@ -61,7 +61,7 @@ app.get('/health', (req, res) => {
   res.json({ 
     status: 'OK', 
     timestamp: new Date().toISOString(),
-    version: '1.0.3' 
+    version: '1.0.4' 
   });
 });
 
@@ -81,6 +81,33 @@ app.get('/health/db', async (req, res) => {
     res.status(500).json({ 
       status: 'ERROR', 
       database: 'disconnected',
+      error: error.message 
+    });
+  }
+});
+
+// Firebase health check
+app.get('/health/firebase', async (req, res) => {
+  try {
+    const { auth } = await import('./config/firebase.js');
+    const hasBase64 = !!process.env.FIREBASE_SERVICE_ACCOUNT_BASE64;
+    const hasIndividual = !!process.env.FIREBASE_PRIVATE_KEY;
+    const hasFile = !!process.env.FIREBASE_SERVICE_ACCOUNT_PATH;
+    
+    res.json({ 
+      status: 'OK',
+      firebase: auth ? 'initialized' : 'not initialized',
+      credentials: {
+        base64: hasBase64 ? `present (${process.env.FIREBASE_SERVICE_ACCOUNT_BASE64?.length} chars)` : 'missing',
+        individual: hasIndividual ? 'present' : 'missing',
+        file: hasFile ? 'present' : 'missing'
+      }
+    });
+  } catch (error) {
+    console.error('Firebase health check failed:', error);
+    res.status(500).json({ 
+      status: 'ERROR', 
+      firebase: 'failed to initialize',
       error: error.message 
     });
   }
