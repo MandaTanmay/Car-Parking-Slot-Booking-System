@@ -122,9 +122,9 @@ const LandingPage = () => {
             {/* Feature 4 */}
             <div className="bg-gradient-to-br from-primary-50 to-white p-8 rounded-xl shadow-md hover:shadow-xl transition-shadow">
               <div className="text-4xl mb-4">💰</div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-3">Transparent Pricing</h3>
+              <h3 className="text-xl font-semibold text-gray-900 mb-3">Best Prices</h3>
               <p className="text-gray-600">
-                Simple ₹50/hour rate with no hidden fees - know exactly what you'll pay
+                Compare prices and choose the parking option that fits your budget
               </p>
             </div>
 
@@ -139,19 +139,10 @@ const LandingPage = () => {
 
             {/* Feature 6 */}
             <div className="bg-gradient-to-br from-primary-50 to-white p-8 rounded-xl shadow-md hover:shadow-xl transition-shadow">
-              <div className="text-4xl mb-4">🔲</div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-3">QR Code Check-In</h3>
-              <p className="text-gray-600">
-                Quick and contactless entry with QR code - just scan and park
-              </p>
-            </div>
-
-            {/* Feature 7 */}
-            <div className="bg-gradient-to-br from-primary-50 to-white p-8 rounded-xl shadow-md hover:shadow-xl transition-shadow">
               <div className="text-4xl mb-4">📊</div>
               <h3 className="text-xl font-semibold text-gray-900 mb-3">Booking History</h3>
               <p className="text-gray-600">
-                Track all your bookings and download receipts from your personalized dashboard
+                Track all your bookings and manage them from your personalized dashboard
               </p>
             </div>
           </div>
@@ -191,9 +182,9 @@ const LandingPage = () => {
               <div className="bg-primary-600 text-white w-16 h-16 rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-6 shadow-lg">
                 3
               </div>
-              <h3 className="text-2xl font-semibold text-gray-900 mb-4">Park</h3>
+              <h3 className="text-2xl font-semibold text-gray-900 mb-4">Park & Pay</h3>
               <p className="text-gray-600">
-                Arrive at your reserved spot, park your vehicle
+                Arrive at your reserved spot, park your vehicle, and pay securely online
               </p>
             </div>
           </div>
@@ -236,7 +227,7 @@ const LandingPage = () => {
               <h4 className="text-lg font-semibold mb-4">Product</h4>
               <ul className="space-y-2 text-gray-400">
                 <li><a href="/features" className="hover:text-white transition-colors cursor-pointer">Features</a></li>
-               {/*<li><a href="/pricing" className="hover:text-white transition-colors cursor-pointer">Pricing</a></li>*/} 
+                <li><a href="/pricing" className="hover:text-white transition-colors cursor-pointer">Pricing</a></li>
                 <li><a href="/help-center" className="hover:text-white transition-colors cursor-pointer">How it Works</a></li>
               </ul>
             </div>
