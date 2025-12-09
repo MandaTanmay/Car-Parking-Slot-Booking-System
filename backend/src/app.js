@@ -3,6 +3,7 @@ import { createServer } from 'http';
 import { Server } from 'socket.io';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import { query } from './db.js';
 
 // Import routes
 import authRoutes from './routes/auth.routes.js';
@@ -11,6 +12,38 @@ import adminRoutes from './routes/admin.routes.js';
 
 // Load environment variables
 dotenv.config();
+
+// Run database migration on startup
+async function runMigrations() {
+  try {
+    console.log('🔧 Running database migrations...');
+    
+    // Add 'pending' to booking status constraint
+    await query(`
+      ALTER TABLE bookings 
+      DROP CONSTRAINT IF EXISTS bookings_status_check;
+    `);
+    
+    await query(`
+      ALTER TABLE bookings 
+      ADD CONSTRAINT bookings_status_check 
+      CHECK (status IN ('pending', 'booked', 'cancelled', 'checked_in', 'completed'));
+    `);
+    
+    await query(`
+      ALTER TABLE bookings 
+      ALTER COLUMN status SET DEFAULT 'pending';
+    `);
+    
+    console.log('✅ Database migrations completed');
+  } catch (error) {
+    if (error.message.includes('already exists') || error.code === '42710') {
+      console.log('⚠️  Migration already applied, skipping');
+    } else {
+      console.error('❌ Migration failed:', error.message);
+    }
+  }
+}
 
 const app = express();
 const httpServer = createServer(app);
@@ -160,10 +193,13 @@ app.use((req, res) => {
 // Start server
 const PORT = process.env.PORT || 5000;
 
-httpServer.listen(PORT, () => {
-  console.log(`🚀 Server running on port ${PORT}`);
-  console.log(`🌍 Environment: ${process.env.NODE_ENV || 'development'}`);
-  console.log(`🔗 Frontend URL: ${process.env.FRONTEND_URL || 'http://localhost:3000'}`);
+// Run migrations before starting server
+runMigrations().then(() => {
+  httpServer.listen(PORT, () => {
+    console.log(`🚀 Server running on port ${PORT}`);
+    console.log(`🌍 Environment: ${process.env.NODE_ENV || 'development'}`);
+    console.log(`🔗 Frontend URL: ${process.env.FRONTEND_URL || 'http://localhost:3000'}`);
+  });
 });
 
 // Graceful shutdown
