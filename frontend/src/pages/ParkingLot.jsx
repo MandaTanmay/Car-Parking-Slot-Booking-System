@@ -99,6 +99,17 @@ const ParkingLot = () => {
         alert('Error: ' + errorMsg);
         return;
       }
+
+      // Check minimum booking duration (1 hour)
+      const durationMs = endDate - startDate;
+      const durationHours = durationMs / (1000 * 60 * 60);
+      
+      if (durationHours < 1) {
+        const errorMsg = 'Minimum parking time is 1 hour';
+        setError(errorMsg);
+        alert('Error: ' + errorMsg);
+        return;
+      }
       
       if (!bookingData.vehicleNumber || !bookingData.vehicleNumber.trim()) {
         const errorMsg = 'Vehicle number is required';
@@ -182,25 +193,45 @@ const ParkingLot = () => {
 
         {/* Time Filter */}
         <div className="card mb-8">
-          <h2 className="text-lg font-semibold mb-4">Check Availability</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Start Time
+          <h2 className="text-xl font-semibold mb-6 text-gray-800">📅 Select Your Parking Time</h2>
+          <p className="text-sm text-gray-500 mb-4">Minimum booking duration: 1 hour | Rate: ₹50/hour</p>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+            {/* Start Time */}
+            <div className="bg-gradient-to-br from-blue-50 to-white p-5 rounded-xl border-2 border-blue-100">
+              <label className="flex items-center text-sm font-semibold text-gray-700 mb-3">
+                <span className="bg-blue-500 text-white w-8 h-8 rounded-full flex items-center justify-center mr-2">1</span>
+                Start Date & Time
               </label>
               <input
                 type="datetime-local"
                 value={bookingData.startTime}
                 min={new Date().toISOString().slice(0, 16)}
-                onChange={(e) =>
-                  setBookingData({ ...bookingData, startTime: e.target.value })
-                }
-                className="input-field"
+                onChange={(e) => {
+                  const newStartTime = e.target.value;
+                  setBookingData({ ...bookingData, startTime: newStartTime });
+                  
+                  // Auto-set end time to 1 hour later if not set or less than 1 hour
+                  if (!bookingData.endTime || newStartTime) {
+                    const start = new Date(newStartTime);
+                    const end = new Date(start.getTime() + 60 * 60 * 1000); // Add 1 hour
+                    setBookingData({ 
+                      ...bookingData, 
+                      startTime: newStartTime,
+                      endTime: end.toISOString().slice(0, 16)
+                    });
+                  }
+                }}
+                className="w-full px-4 py-3 border-2 border-blue-200 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all text-base"
+                required
               />
             </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                End Time
+
+            {/* End Time */}
+            <div className="bg-gradient-to-br from-green-50 to-white p-5 rounded-xl border-2 border-green-100">
+              <label className="flex items-center text-sm font-semibold text-gray-700 mb-3">
+                <span className="bg-green-500 text-white w-8 h-8 rounded-full flex items-center justify-center mr-2">2</span>
+                End Date & Time
               </label>
               <input
                 type="datetime-local"
@@ -209,15 +240,51 @@ const ParkingLot = () => {
                 onChange={(e) =>
                   setBookingData({ ...bookingData, endTime: e.target.value })
                 }
-                className="input-field"
+                className="w-full px-4 py-3 border-2 border-green-200 rounded-lg focus:border-green-500 focus:ring-2 focus:ring-green-200 transition-all text-base"
+                required
               />
             </div>
-            <div className="flex items-end">
-              <button onClick={handleTimeChange} className="btn-primary w-full">
-                Check Availability
-              </button>
-            </div>
           </div>
+
+          {/* Duration Display */}
+          {bookingData.startTime && bookingData.endTime && (
+            <div className="bg-yellow-50 border-2 border-yellow-200 rounded-lg p-4 mb-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-gray-600 mb-1">Parking Duration</p>
+                  <p className="text-2xl font-bold text-gray-800">
+                    {(() => {
+                      const start = new Date(bookingData.startTime);
+                      const end = new Date(bookingData.endTime);
+                      const hours = ((end - start) / (1000 * 60 * 60)).toFixed(1);
+                      return hours >= 1 
+                        ? `${hours} hour${hours > 1 ? 's' : ''}`
+                        : '⚠️ Less than 1 hour';
+                    })()}
+                  </p>
+                </div>
+                <div className="text-right">
+                  <p className="text-sm text-gray-600 mb-1">Estimated Cost</p>
+                  <p className="text-2xl font-bold text-green-600">
+                    ₹{(() => {
+                      const start = new Date(bookingData.startTime);
+                      const end = new Date(bookingData.endTime);
+                      const hours = Math.ceil((end - start) / (1000 * 60 * 60));
+                      return hours >= 1 ? hours * 50 : 50;
+                    })()}
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
+
+          <button 
+            onClick={handleTimeChange} 
+            className="btn-primary w-full py-3 text-lg font-semibold shadow-lg hover:shadow-xl transition-all"
+            disabled={!bookingData.startTime || !bookingData.endTime}
+          >
+            🔍 Check Available Slots
+          </button>
         </div>
 
         {/* Slots Grid */}
@@ -238,72 +305,118 @@ const ParkingLot = () => {
         {/* Booking Modal */}
         {showBookingModal && selectedSlot && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-lg max-w-md w-full p-6">
-              <h3 className="text-2xl font-bold mb-4">Confirm Booking</h3>
+            <div className="bg-white rounded-2xl max-w-lg w-full p-8 shadow-2xl">
+              <div className="text-center mb-6">
+                <div className="bg-blue-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <span className="text-3xl">🚗</span>
+                </div>
+                <h3 className="text-2xl font-bold text-gray-800">Confirm Your Booking</h3>
+              </div>
               
               <div className="space-y-4 mb-6">
-                <div>
-                  <p className="text-sm text-gray-500">Slot</p>
-                  <p className="text-lg font-semibold">{selectedSlot.slot_code}</p>
+                {/* Slot Info */}
+                <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-4 rounded-lg border border-blue-200">
+                  <div className="flex justify-between items-center">
+                    <div>
+                      <p className="text-xs text-gray-500 mb-1">Parking Slot</p>
+                      <p className="text-2xl font-bold text-blue-600">{selectedSlot.slot_code}</p>
+                    </div>
+                    <div className="bg-white px-3 py-1 rounded-full">
+                      <p className="text-sm font-semibold capitalize text-gray-700">
+                        {selectedSlot.slot_type}
+                      </p>
+                    </div>
+                  </div>
                 </div>
-                <div>
-                  <p className="text-sm text-gray-500">Type</p>
-                  <p className="text-lg font-semibold capitalize">
-                    {selectedSlot.slot_type}
-                  </p>
+
+                {/* Duration Info */}
+                <div className="bg-yellow-50 p-4 rounded-lg border border-yellow-200">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <p className="text-xs text-gray-500 mb-1">⏰ Duration</p>
+                      <p className="text-lg font-bold text-gray-800">
+                        {(() => {
+                          const start = new Date(bookingData.startTime);
+                          const end = new Date(bookingData.endTime);
+                          const hours = ((end - start) / (1000 * 60 * 60)).toFixed(1);
+                          return `${hours} hour${hours > 1 ? 's' : ''}`;
+                        })()}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-gray-500 mb-1">💰 Total Cost</p>
+                      <p className="text-lg font-bold text-green-600">
+                        ₹{(() => {
+                          const start = new Date(bookingData.startTime);
+                          const end = new Date(bookingData.endTime);
+                          const hours = Math.ceil((end - start) / (1000 * 60 * 60));
+                          return hours * 50;
+                        })()}
+                      </p>
+                    </div>
+                  </div>
                 </div>
-                <div>
-                  <p className="text-sm text-gray-500">Start Time</p>
-                  <p className="text-lg font-semibold">
-                    {new Date(bookingData.startTime).toLocaleString('en-US', {
-                      month: 'long',
-                      day: 'numeric',
-                      year: 'numeric',
-                      hour: 'numeric',
-                      minute: '2-digit',
-                      hour12: true,
-                    })}
-                  </p>
+
+                {/* Time Details */}
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="bg-green-50 p-3 rounded-lg">
+                    <p className="text-xs text-gray-500 mb-1">From</p>
+                    <p className="text-sm font-semibold text-gray-800">
+                      {new Date(bookingData.startTime).toLocaleString('en-US', {
+                        month: 'short',
+                        day: 'numeric',
+                        hour: 'numeric',
+                        minute: '2-digit',
+                        hour12: true,
+                      })}
+                    </p>
+                  </div>
+                  <div className="bg-red-50 p-3 rounded-lg">
+                    <p className="text-xs text-gray-500 mb-1">To</p>
+                    <p className="text-sm font-semibold text-gray-800">
+                      {new Date(bookingData.endTime).toLocaleString('en-US', {
+                        month: 'short',
+                        day: 'numeric',
+                        hour: 'numeric',
+                        minute: '2-digit',
+                        hour12: true,
+                      })}
+                    </p>
+                  </div>
                 </div>
+
+                {/* Vehicle Number */}
                 <div>
-                  <p className="text-sm text-gray-500">End Time</p>
-                  <p className="text-lg font-semibold">
-                    {new Date(bookingData.endTime).toLocaleString('en-US', {
-                      month: 'long',
-                      day: 'numeric',
-                      year: 'numeric',
-                      hour: 'numeric',
-                      minute: '2-digit',
-                      hour12: true,
-                    })}
-                  </p>
-                </div>
-                <div>
-                  <p className="text-sm text-gray-500 mb-2">Vehicle Number *</p>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    🚙 Vehicle Number *
+                  </label>
                   <input
                     type="text"
-                    placeholder="e.g., ABC-1234"
+                    placeholder="e.g., MH-12-AB-1234"
                     value={bookingData.vehicleNumber}
                     onChange={(e) =>
                       setBookingData({ ...bookingData, vehicleNumber: e.target.value.toUpperCase() })
                     }
-                    className="input-field w-full"
+                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all text-base font-semibold"
                     required
                   />
                 </div>
               </div>
 
-              <div className="flex space-x-4">
+              <div className="flex space-x-3">
                 <button
                   onClick={() => {
                     setShowBookingModal(false);
                     setSelectedSlot(null);
                   }}
-                  className="btn-secondary flex-1"
+                  className="flex-1 px-6 py-3 border-2 border-gray-300 text-gray-700 font-semibold rounded-lg hover:bg-gray-50 transition-all"
                 >
                   Cancel
                 </button>
-                <button onClick={handleBooking} className="btn-primary flex-1">
+                <button 
+                  onClick={handleBooking} 
+                  className="flex-1 px-6 py-3 bg-gradient-to-r from-blue-500 to-blue-600 text-white font-semibold rounded-lg hover:from-blue-600 hover:to-blue-700 shadow-lg hover:shadow-xl transition-all"
+                >
                   Confirm Booking
                 </button>
               </div>
