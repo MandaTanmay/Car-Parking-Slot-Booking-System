@@ -74,9 +74,9 @@ const LandingPage = () => {
                 <p className="text-primary-100">Reserve your spot ahead of time with just a few taps</p>
               </div>
               <div className="text-center">
-                <div className="text-5xl mb-4">💳</div>
-                <h3 className="text-xl font-semibold mb-2">Pay Securely</h3>
-                <p className="text-primary-100">Enjoy contactless payment with multiple secure options for a safe and hassle-free experience</p>
+                <div className="text-5xl mb-4">🔔</div>
+                <h3 className="text-xl font-semibold mb-2">Smart Notifications</h3>
+                <p className="text-primary-100">Get instant alerts for booking confirmations, reminders, and real-time slot updates</p>
               </div>
             </div>
           </div>
