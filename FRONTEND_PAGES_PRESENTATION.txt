@@ -1,0 +1,1938 @@
+================================================================================
+                   PARKEASY - FRONTEND PAGES PRESENTATION
+                    Complete UI/UX and Content Documentation
+================================================================================
+
+Project: Car Parking Slot Booking System
+Frontend Framework: React 18.2.0
+Styling: Tailwind CSS
+Date: December 10, 2025
+
+
+TABLE OF CONTENTS
+================================================================================
+1. Landing Page (/)
+2. Login Page (/login)
+3. Admin Login (/admin-login)
+4. Dashboard (/dashboard)
+5. Parking Lot Page (/parking-lot/:lotId)
+6. Booking Details Page (/booking/:bookingId)
+7. Admin Panel (/admin)
+8. QR Scanner (/qr-scanner)
+9. Features Page (/features)
+10. Pricing Page (/pricing)
+11. About Us Page (/about)
+12. Contact Page (/contact)
+13. Help Center (/help)
+14. Terms of Service (/terms)
+15. Privacy Policy (/privacy)
+
+
+================================================================================
+                            PAGE DESCRIPTIONS
+================================================================================
+
+
+1. LANDING PAGE (/)
+================================================================================
+File: LandingPage.jsx
+Route: /
+Access: Public
+Purpose: Main entry point and marketing page
+
+SECTIONS:
+---------
+
+A. NAVIGATION BAR
+   - ParkEasy logo (🚗) with brand name
+   - Login button
+   - Get Started button (redirects to registration)
+   - Clean white background with shadow
+
+B. HERO SECTION
+   Layout: Full-width with gradient background (primary-50 to primary-100)
+   
+   Content:
+   - Main Heading: "Find Your Perfect Parking Spot"
+   - Subheading: "Say goodbye to parking hassles. Book, manage, and pay 
+                  for parking spaces instantly with ParkEasy"
+   - CTA Buttons:
+     * "Get Started Now" (primary button, large, with hover scale effect)
+     * "Sign In" (secondary button, bordered)
+   
+   Visual Features:
+   - Gradient card with three feature highlights:
+     * 🎯 Find Instantly - Real-time parking spot location
+     * 📱 Book Online - Reserve ahead with few taps
+     * 💳 Pay Securely - Contactless payment, multiple options
+
+C. FEATURES SECTION
+   Background: White
+   Layout: 2-column on tablet, 3-column on desktop grid
+   
+   Features Displayed (6 cards):
+   
+   1. ⚡ Real-Time Availability
+      "See live parking availability and never waste time searching"
+   
+   2. 🔒 Secure Booking
+      "Reservation confirmed instantly with secure payment processing"
+   
+   3. 📍 Smart Location
+      "Find parking lots near your destination with integrated maps"
+   
+   4. 💰 Best Prices
+      "Transparent pricing at ₹50/hour - affordable without hidden fees"
+   
+   5. 🕐 24/7 Support
+      "Get help anytime with dedicated customer support team"
+   
+   6. 📊 Booking History
+      "Track all bookings from personalized dashboard"
+
+D. HOW IT WORKS SECTION
+   - Step-by-step guide
+   - Visual process flow
+   - Simple three-step process
+
+E. CALL-TO-ACTION SECTION
+   - Encourages sign-up
+   - Prominent buttons
+   - Social proof elements
+
+COLOR SCHEME:
+- Primary: Blue gradient (primary-50 to primary-700)
+- Background: White and light gray
+- Text: Dark gray (gray-900) for headings, gray-600 for body
+- Accent: Primary blue for CTAs
+
+INTERACTIVE ELEMENTS:
+- Hover effects on feature cards (shadow elevation)
+- Button animations (scale on hover)
+- Smooth scroll behavior
+- Responsive navigation
+
+
+2. LOGIN PAGE (/login)
+================================================================================
+File: Login.jsx
+Route: /login, /login?mode=register
+Access: Public (redirects if authenticated)
+Purpose: User authentication and registration
+
+MODES:
+------
+The page supports two modes controlled by URL parameter:
+- Default: Login mode
+- ?mode=register: Sign-up mode
+
+SECTIONS:
+---------
+
+A. CONTAINER
+   - Centered on screen
+   - Gradient background (from-blue-500 via-primary-600 to-blue-700)
+   - Card-based layout with shadow
+
+B. HEADER
+   - Icon: 🚗
+   - Title: "Welcome Back" (login) or "Create Account" (signup)
+   - Subtitle: Context-appropriate message
+
+C. AUTHENTICATION OPTIONS
+
+   1. Google OAuth (Primary Method)
+      - Large button with Google icon
+      - Text: "Sign in with Google" / "Sign up with Google"
+      - One-click authentication
+      - Firebase integration
+      - Auto-redirect to dashboard on success
+
+   2. Email/Password Authentication
+      
+      Login Form:
+      - Email input field
+      - Password input field
+      - "Sign In" button
+      - "Forgot Password?" link
+      - Toggle to sign-up mode
+      
+      Sign-Up Form:
+      - Name input field
+      - Email input field
+      - Password input field (minimum 6 characters)
+      - "Create Account" button
+      - Toggle to login mode
+
+   3. Forgot Password Mode
+      - Email input
+      - "Send Reset Email" button
+      - Success/error messages
+      - Back to login link
+
+D. ERROR HANDLING
+   Comprehensive Firebase error messages:
+   - "Email already in use"
+   - "Invalid email address"
+   - "Weak password (minimum 6 characters)"
+   - "Invalid credentials"
+   - "User not found"
+   - Custom error alerts
+
+E. FORM VALIDATION
+   - Required field validation
+   - Email format validation
+   - Password strength requirements
+   - Real-time error display
+
+F. LOADING STATES
+   - Disabled inputs during authentication
+   - Loading spinner on buttons
+   - "Logging in..." / "Creating account..." text
+
+SECURITY FEATURES:
+- Firebase authentication
+- JWT token storage
+- Automatic redirect for authenticated users
+- Secure password handling (never displayed)
+
+USER EXPERIENCE:
+- Auto-focus on email field
+- Enter key submits form
+- Clear error messages
+- Mode toggle without page reload
+- Persistent login state
+
+
+3. ADMIN LOGIN (/admin-login)
+================================================================================
+File: AdminLogin.jsx
+Route: /admin-login
+Access: Public (admin verification required)
+Purpose: Dedicated admin authentication portal
+
+DESIGN THEME:
+-------------
+Dark theme to distinguish from user login
+- Background: Gradient from gray-900 to gray-900 via gray-800
+- Card: Gray-800 with gray-700 border
+- Text: White and gray-300/400
+- Accent: Blue for buttons
+
+SECTIONS:
+---------
+
+A. HEADER
+   - Icon: 🔐 (Lock emoji)
+   - Title: "Admin Portal"
+   - Subtitle: "Secure administrator access"
+   - Professional, secure appearance
+
+B. ADMIN LOGIN FORM
+   Fields:
+   - Admin Email (email type, required)
+     * Placeholder: "admin@example.com"
+     * Dark background (gray-700)
+     * Light text (white)
+   
+   - Password (password type, required)
+     * Placeholder: "••••••••"
+     * Dark background (gray-700)
+     * Light text (white)
+   
+   - Submit Button: "Sign in as Admin"
+     * Full width
+     * Blue background
+     * Loading state: "Signing in..."
+
+C. ACCESS CONTROL
+   Post-Authentication Check:
+   - Verifies user role from JWT token
+   - If role === 'admin': Redirect to /admin
+   - If role !== 'admin': 
+     * Display: "Access denied. Admin credentials required"
+     * Clear authentication
+     * Prevent dashboard access
+
+D. ERROR MESSAGES
+   Admin-specific errors:
+   - "Invalid admin credentials"
+   - "Access denied"
+   - "Too many failed attempts"
+   - "Invalid email address"
+
+E. SECURITY INDICATORS
+   - Locked icon
+   - "Secure" messaging
+   - Dark theme for seriousness
+   - No social login (email/password only)
+
+DIFFERENCE FROM USER LOGIN:
+- No Google OAuth
+- Role verification
+- Dark theme
+- Security-focused messaging
+- Separate route prevents confusion
+
+
+4. DASHBOARD (/dashboard)
+================================================================================
+File: Dashboard.jsx
+Route: /dashboard
+Access: Protected (requires authentication)
+Purpose: User's main control panel
+
+LAYOUT:
+-------
+- Navbar component at top
+- Main content area
+- Responsive grid layout
+
+SECTIONS:
+---------
+
+A. HEADER
+   - "Back to Home" button with arrow icon
+   - Page title area
+   - Error banner (if applicable)
+
+B. AVAILABLE PARKING LOTS SECTION
+   
+   Header:
+   - Title: "Available Parking Lots"
+   - Search bar (right-aligned)
+     * Placeholder: "Search parking lots..."
+     * Live search functionality
+     * Search icon indicator
+   
+   Grid Layout:
+   - 1 column on mobile
+   - 2 columns on tablet
+   - 3 columns on desktop
+   
+   Each Parking Lot Card:
+   - Name (bold, large text)
+   - Address (smaller text, gray)
+   - Description (truncated if long)
+   - Slot statistics:
+     * Total slots count
+     * Active slots count
+   - Hourly rate: "₹50/hour"
+   - "View Slots" button (primary blue)
+   - Hover effect: Shadow elevation
+   - Click: Navigate to parking lot detail page
+
+C. MY BOOKINGS SECTION
+   
+   Tab Navigation:
+   - "Upcoming" bookings
+   - "Active" bookings
+   - "Past" bookings
+   - Active tab highlighted (blue underline)
+   
+   Booking Filters:
+   - Upcoming: status='booked', start_time > now
+   - Active: status='booked' or 'checked_in', time is between start and end
+   - Past: status='completed' or 'cancelled' or end_time < now
+   
+   Each Booking Card:
+   - Parking lot name and address
+   - Slot information:
+     * Slot code (large, bold)
+     * Slot type badge
+   - Time information:
+     * Start time (formatted)
+     * End time (formatted)
+   - Vehicle number
+   - Status badge (color-coded):
+     * Booked: Blue
+     * Checked In: Green
+     * Completed: Gray
+     * Cancelled: Red
+   - Total amount: ₹ calculation
+   - Action buttons:
+     * "View Details" (all bookings)
+     * "Cancel Booking" (upcoming only)
+     * "Download Receipt" (completed)
+
+D. EMPTY STATES
+   - No parking lots: "No parking lots available"
+   - No search results: "No parking lots found matching '{query}'"
+   - No bookings: "No {tab} bookings found"
+
+E. LOADING STATE
+   - Full-page spinner
+   - Centered on screen
+   - Animated rotation
+   - Primary color
+
+FEATURES:
+---------
+- Real-time data fetching
+- Live search (no API calls, client-side filtering)
+- Responsive design
+- Tab-based navigation
+- Error handling with banners
+- Auto-refresh capability
+
+USER INTERACTIONS:
+- Click parking lot → View slots page
+- Click "View Details" → Booking details page
+- Click "Cancel Booking" → Confirmation modal → Update booking
+- Search → Filter parking lots instantly
+- Switch tabs → Filter bookings
+
+
+5. PARKING LOT PAGE (/parking-lot/:lotId)
+================================================================================
+File: ParkingLot.jsx
+Route: /parking-lot/:lotId
+Access: Protected (requires authentication)
+Purpose: View and book parking slots
+
+REAL-TIME FEATURES:
+-------------------
+- Socket.IO integration
+- Auto-joins parking lot room
+- Receives live slot updates
+- Auto-refreshes on changes
+
+SECTIONS:
+---------
+
+A. HEADER
+   - Navbar component
+   - Parking lot information banner:
+     * Name (large, bold)
+     * Address
+     * Description
+     * Hourly rate
+     * Total slots count
+
+B. TIME SELECTION AREA
+   Background: Light blue gradient card
+   
+   Form Fields:
+   1. Start Time
+      - DateTime input
+      - Label: "Start Time"
+      - Validation: Must be future time
+   
+   2. End Time
+      - DateTime input
+      - Label: "End Time"
+      - Validation: Must be after start time
+   
+   3. "Check Availability" Button
+      - Primary blue
+      - Fetches slots with time filter
+      - Smooth scroll to slots section
+   
+   Validation Rules:
+   - Start time must be in future
+   - End time must be after start time
+   - Minimum duration: 1 hour
+   - Real-time error messages
+
+C. SLOTS DISPLAY SECTION (id="slots-section")
+   
+   Grid Layout:
+   - 2 columns on mobile
+   - 3 columns on tablet
+   - 4 columns on desktop
+   
+   Slot Card (SlotCard component):
+   
+   Visual Design:
+   - Card with shadow
+   - Status-based color scheme:
+     * Available: Green border, white background
+     * Occupied: Red border, red-50 background
+     * Inactive: Gray border, gray-100 background
+   
+   Content:
+   - Slot code (large, bold, centered)
+   - Slot type badge:
+     * Car: Blue badge
+     * Bike: Purple badge
+     * EV: Green badge
+   - Status indicator:
+     * "Available" (green text)
+     * "Occupied" (red text)
+     * "Inactive" (gray text)
+   - "Book Now" button (available slots only)
+   
+   Slot States:
+   - is_available: true → Can book
+   - is_available: false → Disabled, grayed out
+   - is_active: false → Not bookable
+
+D. BOOKING MODAL (Popup)
+   
+   Triggered: When user clicks "Book Now"
+   
+   Modal Content:
+   - Header: "Confirm Booking"
+   - Slot information display:
+     * Slot code
+     * Slot type
+     * Parking lot name
+   - Pre-filled information:
+     * Start time (from date picker)
+     * End time (from date picker)
+   - Vehicle Number Input:
+     * Text field
+     * Placeholder: "Enter vehicle number (e.g., ABC1234)"
+     * Required field
+     * Validation: Not empty, trimmed
+   - Calculated Amount:
+     * Duration calculation
+     * Rate × Hours
+     * Display: "₹{amount}"
+   - Action Buttons:
+     * "Confirm Booking" (primary)
+     * "Cancel" (secondary)
+
+E. BOOKING PROCESS
+   
+   Steps:
+   1. User selects start/end time
+   2. Clicks "Check Availability"
+   3. System fetches available slots
+   4. User clicks "Book Now" on desired slot
+   5. Modal opens with booking form
+   6. User enters vehicle number
+   7. System validates:
+      - Times are valid
+      - Minimum 1 hour duration
+      - Vehicle number provided
+   8. API call creates booking
+   9. On success:
+      - Alert: "Booking successful!"
+      - Navigate to dashboard
+   10. On failure:
+       - Display error message
+       - Keep modal open for correction
+
+F. ERROR HANDLING
+   
+   Validation Errors:
+   - "Start time must be in the future"
+   - "End time must be after start time"
+   - "Minimum parking time is 1 hour"
+   - "Vehicle number is required"
+   
+   API Errors:
+   - "Slot not available for selected time"
+   - "Booking conflict detected"
+   - "Failed to create booking"
+   - Network errors
+
+G. REAL-TIME UPDATES
+   
+   Socket Events:
+   - Joins room: `parking_lot_${lotId}`
+   - Listens for: 'slot_updated'
+   - On update:
+     * Refetch slots
+     * Update availability
+     * Visual refresh (no page reload)
+   - Leaves room on navigation away
+
+H. LOADING STATES
+   - Initial page load spinner
+   - "Checking availability..." during fetch
+   - "Processing booking..." during submission
+   - Disabled buttons during operations
+
+I. RESPONSIVE DESIGN
+   - Mobile: Single column, large tap targets
+   - Tablet: 2-3 columns
+   - Desktop: 4 columns, optimal spacing
+   - Modal: Centered, responsive width
+
+
+6. BOOKING DETAILS PAGE (/booking/:bookingId)
+================================================================================
+File: BookingPage.jsx
+Route: /booking/:bookingId
+Access: Protected (requires authentication)
+Purpose: View detailed booking information and manage booking
+
+SECTIONS:
+---------
+
+A. BOOKING INFORMATION CARD
+   
+   Layout: Large card, centered
+   
+   Header Section (Blue gradient):
+   - Icon: 🎫
+   - Title: "Booking Details"
+   - Booking ID (truncated with ellipsis)
+   
+   Status Badge:
+   - Color-coded by status:
+     * Booked: Blue background
+     * Checked In: Green background
+     * Completed: Gray background
+     * Cancelled: Red background
+   - Status text: Uppercase
+   - Prominent display
+
+B. PARKING LOCATION SECTION
+   Background: Blue-50 card
+   
+   Content:
+   - Icon: 🏢
+   - Parking lot name (bold)
+   - Full address
+   - Map icon (potential future integration)
+
+C. SLOT INFORMATION
+   
+   Grid layout (2 columns):
+   
+   Left Card (Green theme):
+   - Label: "Slot Number"
+   - Slot code (large, bold)
+   
+   Right Card (Purple theme):
+   - Label: "Slot Type"
+   - Type name (capitalized)
+
+D. TIME DETAILS
+   
+   Format: Formatted date/time strings
+   
+   Display:
+   - Check-in time
+   - Check-out time
+   - Total duration (calculated hours)
+   
+   Visual: Clear, easy-to-read format
+
+E. VEHICLE INFORMATION
+   - Vehicle number
+   - Registration display
+
+F. QR CODE SECTION
+   
+   Display Conditions:
+   - Only for active bookings (booked, checked_in)
+   - Not shown for cancelled/completed
+   
+   Visual:
+   - Large QR code image (base64)
+   - Centered display
+   - Border and shadow
+   - Instructions: "Show this QR code at the parking entrance"
+   
+   QR Code Contains:
+   - Unique token
+   - Booking reference
+   - Verification data
+
+G. PAYMENT SUMMARY
+   
+   Calculation:
+   - Hourly rate (from parking lot or default ₹50)
+   - Duration in hours (rounded up)
+   - Total amount: rate × hours
+   
+   Display:
+   - Breakdown:
+     * Hourly Rate: ₹X/hour
+     * Duration: X hour(s)
+     * Total Amount: ₹XXX (large, bold)
+   
+   Visual: Highlighted box with border
+
+H. ACTION BUTTONS
+   
+   Cancel Booking:
+   - Display condition: status === 'booked' AND start_time > now
+   - Red button, warning style
+   - Confirmation dialog: "Are you sure you want to cancel?"
+   - On confirm:
+     * API call to cancel
+     * Alert: "Booking cancelled successfully"
+     * Refresh booking details
+     * Status updates to 'cancelled'
+   
+   Download Receipt:
+   - Available for all bookings
+   - Blue button, primary style
+   - Generates PDF receipt (jsPDF)
+   - Professional formatting
+   - Automatic download
+
+I. PDF RECEIPT GENERATION
+   
+   Receipt Components:
+   
+   1. Header (Blue background):
+      - ParkEasy branding
+      - "Parking Booking Receipt" title
+      - Professional design
+   
+   2. Booking Information:
+      - Booking ID
+      - Status badge
+      - Booked on date
+      - Vehicle number
+   
+   3. Parking Location:
+      - Parking lot name (bold)
+      - Full address (wrapped)
+      - Section divider
+   
+   4. Slot Information:
+      - Visual slot card (blue box)
+      - Slot code (centered, large)
+      - Slot type label
+   
+   5. Parking Duration:
+      - Check-in timestamp
+      - Check-out timestamp
+      - Total duration
+      - Formatted clearly
+   
+   6. Payment Summary Box:
+      - Hourly rate line
+      - Duration line
+      - Subtotal
+      - Total amount (bold, large)
+   
+   7. Footer:
+      - Terms and conditions
+      - Thank you message
+      - Contact information
+      - Timestamp
+   
+   PDF Styling:
+   - Professional fonts (Helvetica)
+   - Color-coded sections
+   - Proper spacing and alignment
+   - High-quality formatting
+   - Print-ready layout
+
+J. LOADING & ERROR STATES
+   
+   Loading:
+   - Full-page spinner during fetch
+   - "Loading booking details..."
+   
+   Error:
+   - Red error banner
+   - Error message display
+   - "Back to Dashboard" link
+
+K. RESPONSIVE DESIGN
+   - Mobile: Single column, full width
+   - Tablet: Centered, max-width
+   - Desktop: Centered card, optimal reading width
+   - QR code: Scales appropriately
+
+
+7. ADMIN PANEL (/admin)
+================================================================================
+File: AdminPanel.jsx
+Route: /admin
+Access: Admin only (role-based protection)
+Purpose: Complete administrative control panel
+
+ACCESS CONTROL:
+---------------
+- Checks user.role === 'admin'
+- Redirects non-admin to /dashboard
+- Redirects unauthenticated to /login
+
+MAIN TABS:
+----------
+1. Pending Bookings
+2. Approved Bookings
+3. Declined Bookings
+4. Parking Lots Management
+5. Analytics Dashboard
+
+SECTIONS:
+---------
+
+A. ANALYTICS DASHBOARD (Top Section)
+   
+   Statistics Cards (4-column grid):
+   
+   1. Total Bookings
+      - Icon: 📊
+      - Large number display
+      - Label: "Total Bookings"
+      - Background: Blue gradient
+   
+   2. Active Bookings
+      - Icon: 🚗
+      - Live count
+      - Label: "Active Now"
+      - Background: Green gradient
+   
+   3. Total Revenue
+      - Icon: 💰
+      - Amount in rupees
+      - Label: "Total Revenue"
+      - Background: Purple gradient
+   
+   4. Occupancy Rate
+      - Icon: 📈
+      - Percentage calculation
+      - Label: "Occupancy Rate"
+      - Background: Orange gradient
+   
+   Analytics Data:
+   - Real-time calculation
+   - Fetched from API
+   - Auto-refresh capability
+
+B. BOOKINGS MANAGEMENT (Tab-based)
+   
+   Tabs:
+   - Pending (default active)
+   - Approved
+   - Declined
+   
+   Booking Table Layout:
+   
+   Columns:
+   - Booking ID (truncated)
+   - User Name
+   - User Email
+   - Parking Lot
+   - Slot Code
+   - Vehicle Number
+   - Start Time
+   - End Time
+   - Status Badge
+   - Actions
+   
+   Status Badges:
+   - Pending: Yellow background
+   - Approved: Green background
+   - Declined: Red background
+   
+   Actions (Pending bookings):
+   - "Approve" button (green)
+     * Confirmation dialog
+     * Updates status to 'approved'
+     * Notifies user
+   - "Decline" button (red)
+     * Confirmation dialog
+     * Updates status to 'declined'
+     * Notifies user
+   
+   Responsive Table:
+   - Desktop: Full table
+   - Mobile: Card layout with stacked information
+
+C. PARKING LOTS MANAGEMENT
+   
+   Header:
+   - Title: "Parking Lots"
+   - "Add New Parking Lot" button (primary, right-aligned)
+   
+   Parking Lots Grid:
+   
+   Each Lot Card:
+   - Name (bold, large)
+   - Address
+   - Description
+   - Statistics:
+     * Total slots
+     * Active slots
+     * Inactive slots
+   - Hourly rate display
+   - Action buttons:
+     * "View Slots" (blue) → Opens slot management
+     * "Edit" (yellow) → Edit modal
+     * "Delete" (red) → Confirmation dialog
+   
+   Add Parking Lot Modal:
+   Form Fields:
+   - Name (required)
+   - Address (required)
+   - Description (optional, textarea)
+   - Hourly Rate (number, default 50)
+   - "Create" button
+   - "Cancel" button
+   
+   Edit Parking Lot Modal:
+   - Same fields as Add
+   - Pre-filled with existing data
+   - "Update" button
+   
+   Delete Confirmation:
+   - Warning message
+   - "This will delete all slots and bookings"
+   - Confirm/Cancel buttons
+
+D. SLOTS MANAGEMENT (Nested View)
+   
+   Triggered: Click "View Slots" on parking lot
+   
+   Header:
+   - Parking lot name
+   - "Add New Slot" button
+   - "Back to Parking Lots" button
+   
+   Slots Grid:
+   
+   Each Slot Card:
+   - Slot code (large, centered)
+   - Slot type badge
+   - Status indicator:
+     * Active: Green dot
+     * Inactive: Red dot
+   - Action buttons:
+     * "Toggle Status" (blue) → Activate/Deactivate
+     * "Edit" (yellow) → Edit modal
+     * "Delete" (red) → Confirmation dialog
+   
+   Add Slot Modal:
+   Form Fields:
+   - Slot Code (required, text)
+   - Slot Type (select):
+     * Car
+     * Bike
+     * EV
+   - "Create" button
+   - "Cancel" button
+   
+   Edit Slot Modal:
+   - Same fields as Add
+   - Pre-filled data
+   - "Update" button
+   
+   Toggle Status:
+   - Single click activation/deactivation
+   - Immediate visual feedback
+   - Confirmation: "Slot updated successfully"
+
+E. RECENT BOOKINGS SECTION
+   
+   Display: Latest 5-10 bookings
+   
+   Table/List Layout:
+   - Timestamp
+   - User name
+   - Parking lot
+   - Slot
+   - Status
+   - Amount
+   
+   Purpose: Quick overview of activity
+
+F. MODALS SYSTEM
+   
+   All modals include:
+   - Overlay (dark background)
+   - Centered modal card
+   - Close button (X)
+   - Form or content area
+   - Action buttons
+   - Validation
+   - Loading states
+   - Error handling
+
+G. FORM VALIDATION
+   
+   Required Fields:
+   - Visual indicators (*)
+   - Browser validation
+   - Custom error messages
+   - Inline error display
+   
+   Submit Prevention:
+   - Disabled button during processing
+   - Loading indicator
+   - Success/error feedback
+
+H. ERROR HANDLING
+   
+   Display Methods:
+   - Alert dialogs for confirmations
+   - Toast notifications for success
+   - Error banners for failures
+   - Inline form errors
+   
+   Error Messages:
+   - User-friendly language
+   - Specific problem description
+   - Suggested actions
+
+I. REAL-TIME UPDATES
+   
+   Features:
+   - Auto-refresh analytics every 30s (optional)
+   - Manual refresh button
+   - Live booking status updates
+   - Slot availability changes
+
+J. RESPONSIVE DESIGN
+   
+   Mobile:
+   - Stacked cards
+   - Hamburger menu for tabs
+   - Full-width buttons
+   - Collapsible sections
+   
+   Tablet:
+   - 2-column grid
+   - Visible tabs
+   - Medium-sized modals
+   
+   Desktop:
+   - Multi-column layouts
+   - Side-by-side views
+   - Large modals
+   - Optimal spacing
+
+K. SECURITY FEATURES
+   
+   - Role verification on mount
+   - Protected API endpoints
+   - Token authentication
+   - Action confirmations
+   - Audit logging (backend)
+
+
+8. QR SCANNER PAGE (/qr-scanner)
+================================================================================
+File: QRScanner.jsx
+Route: /qr-scanner, /qr-scanner?token=xxx
+Access: Public (designed for admin use)
+Purpose: Verify and view booking details via QR code
+
+FUNCTIONALITY:
+--------------
+- Scan QR codes from bookings
+- Verify booking validity
+- Display booking information
+- Check-in functionality (admin)
+
+SECTIONS:
+---------
+
+A. NAVIGATION
+   - ParkEasy logo (clickable → home)
+   - Login button
+
+B. HEADER
+   - Icon: 🔲 (QR code emoji, large)
+   - Title: "Scan QR Code"
+   - Subtitle: "View booking details by scanning the QR code"
+   - Centered layout
+
+C. INPUT FORM
+   
+   Components:
+   - Label: "Enter QR Token"
+   - Text Input:
+     * Placeholder: "Paste QR token here..."
+     * Full width with border
+     * Focus state with blue ring
+     * Enter key triggers scan
+   - "Scan" Button:
+     * Primary blue
+     * Loading state: "Scanning..."
+     * Disabled during processing
+   
+   Auto-Scan Feature:
+   - If URL contains ?token=xxx parameter
+   - Automatically fills input
+   - Auto-triggers scan on page load
+   - Useful for QR code redirects
+
+D. BOOKING DETAILS DISPLAY
+   
+   Shown after successful scan
+   
+   Card Layout:
+   
+   1. Header (Gradient blue background):
+      - Title: "Booking Details"
+      - Booking ID (truncated)
+      - White text
+   
+   2. Status Badge:
+      - Color-coded by status:
+        * Booked: Blue
+        * Checked In: Green
+        * Completed: Gray
+        * Cancelled: Red
+      - Rounded pill shape
+      - Bold text
+   
+   3. Parking Location Card (Blue-50 background):
+      - Icon: 🏢
+      - Section title: "Parking Location"
+      - Lot name (bold)
+      - Full address (smaller text)
+   
+   4. Slot Information Grid (2 columns):
+      
+      Left (Green-50 background):
+      - Label: "Slot Number"
+      - Slot code (large, bold)
+      
+      Right (Purple-50 background):
+      - Label: "Slot Type"
+      - Type name (capitalized)
+   
+   5. User & Vehicle Information:
+      - User name
+      - User email
+      - Vehicle number
+      - Icon indicators
+   
+   6. Time Information:
+      - Start time (formatted)
+      - End time (formatted)
+      - Duration calculation
+      - Clock icon
+   
+   7. Payment Information:
+      - Hourly rate
+      - Total amount
+      - Bold, highlighted
+      - Money icon
+
+E. ERROR HANDLING
+   
+   Error Display:
+   - Red alert box
+   - Icon: ❌
+   - Error title: "Error"
+   - Error message
+   - Dismissible
+   
+   Common Errors:
+   - "Please enter a QR token"
+   - "Invalid QR token"
+   - "Booking not found"
+   - "QR token expired"
+   - "Failed to fetch booking details"
+
+F. LOADING STATE
+   - Button disabled
+   - Text: "Scanning..."
+   - Spinner (optional)
+   - Input disabled during scan
+
+G. USE CASES
+   
+   1. Admin Check-In:
+      - Scan QR at parking entrance
+      - Verify booking details
+      - Confirm vehicle matches
+      - Update status to 'checked_in'
+   
+   2. User Verification:
+      - Users can scan their own QR
+      - View booking details
+      - Confirm information
+   
+   3. Quick Lookup:
+      - Enter/paste token manually
+      - No camera required
+      - Works on any device
+
+H. RESPONSIVE DESIGN
+   - Mobile: Full width, large touch targets
+   - Tablet: Centered, medium width
+   - Desktop: Centered card, optimal width
+   - QR display: Scales appropriately
+
+I. ACCESSIBILITY
+   - Keyboard navigation (Enter to scan)
+   - Clear labels
+   - Error announcements
+   - High contrast colors
+
+
+9. FEATURES PAGE (/features)
+================================================================================
+File: Features.jsx
+Route: /features
+Access: Public
+Purpose: Showcase platform capabilities
+
+SECTIONS:
+---------
+
+A. HERO SECTION
+   Background: Blue gradient (primary-600 to primary-700)
+   
+   Content:
+   - Title: "Powerful Features"
+   - Subtitle: "Everything you need for a seamless parking experience"
+   - White text
+   - Centered layout
+
+B. FEATURES GRID
+   
+   Layout: 4-column grid on desktop, responsive
+   
+   8 Feature Cards:
+   
+   1. 🔍 Real-Time Availability
+      "Check parking slot availability in real-time and book instantly"
+   
+   2. 📱 QR Code Check-In
+      "Quick and contactless check-in with QR codes"
+   
+   3. 💰 Transparent Pricing
+      "Know exactly what you'll pay with ₹50/hour pricing"
+   
+   4. 🔔 Instant Notifications
+      "Get real-time updates about bookings and confirmations"
+   
+   5. 🚗 Multiple Vehicle Support
+      "Park cars, bikes, or electric vehicles with dedicated slots"
+   
+   6. 📊 Booking History
+      "Access complete parking history and download receipts"
+   
+   7. 🔒 Secure Payments
+      "Safe and secure payment processing with multiple options"
+   
+   8. ⚡ EV Charging Slots
+      "Special slots with electric vehicle charging facilities"
+   
+   Card Design:
+   - White background
+   - Shadow on hover
+   - Large emoji icon
+   - Bold title
+   - Descriptive text
+   - Border (gray-100)
+
+C. CTA SECTION
+   Background: Primary blue
+   
+   Content:
+   - Heading: "Ready to Get Started?"
+   - Subheading: "Join thousands of users..."
+   - "Sign Up Now" button (large, white)
+
+D. VISUAL DESIGN
+   - Clean, modern layout
+   - Consistent spacing
+   - Card-based design
+   - Hover effects
+   - Responsive grid
+
+
+10. PRICING PAGE (/pricing)
+================================================================================
+File: Pricing.jsx
+Route: /pricing
+Access: Public
+Purpose: Display pricing information
+
+SECTIONS:
+---------
+
+A. HERO SECTION
+   Background: Blue gradient
+   
+   Content:
+   - Title: "Simple & Transparent Pricing"
+   - Subtitle: "Pay only for what you use. No hidden fees"
+
+B. MAIN PRICING CARD
+   
+   Design: Large centered card with border
+   
+   Content:
+   
+   1. Icon: 💰 (large)
+   
+   2. Title: "Hourly Rate"
+   
+   3. Price Display:
+      - "₹50" (very large, bold, primary color)
+      - "/hour" (gray, smaller)
+      - Centered, prominent
+   
+   4. Minimum booking note:
+      "Minimum booking: 1 hour"
+   
+   5. Included Features (✅ checkmarks):
+      - Real-time availability - "Check and book slots instantly"
+      - QR code check-in - "Contactless and quick entry"
+      - Booking management - "View, modify, or cancel bookings"
+      - Digital receipts - "Download PDF receipts anytime"
+      - 24/7 support - "Help when you need it"
+   
+   6. CTA Button:
+      "Start Parking Now" (full width, primary blue)
+
+C. EXAMPLE CALCULATIONS
+   
+   Background: Blue-50 card
+   
+   Title: "Example Costs"
+   
+   3-column grid:
+   
+   1. Quick Stop (1 hour):
+      - Duration: "1 hour"
+      - Cost: "₹50"
+      - Use case: "Quick errands"
+   
+   2. Half Day (4 hours):
+      - Duration: "4 hours"
+      - Cost: "₹200"
+      - Use case: "Shopping trip"
+   
+   3. Full Day (8 hours):
+      - Duration: "8 hours"
+      - Cost: "₹400"
+      - Use case: "Work day"
+   
+   Card Design:
+   - White background
+   - Shadow
+   - Centered text
+   - Clear pricing
+
+D. BENEFITS HIGHLIGHT
+   - No hidden fees
+   - Pay-as-you-go
+   - Transparent billing
+   - Digital receipts
+
+E. COMPARISON (Optional)
+   - Competitive pricing
+   - Value proposition
+   - Cost savings
+
+
+11. ABOUT US PAGE (/about)
+================================================================================
+File: AboutUs.jsx
+Route: /about
+Access: Public
+Purpose: Company information and values
+
+SECTIONS:
+---------
+
+A. HERO SECTION
+   Background: Blue gradient
+   
+   Content:
+   - Title: "About ParkEasy"
+   - Subtitle: "Making parking simple, fast, and hassle-free"
+
+B. MISSION SECTION
+   
+   Title: "Our Mission"
+   
+   Content (2 paragraphs):
+   1. "At ParkEasy, we believe finding parking shouldn't be stressful.
+      Our mission is to revolutionize urban parking with seamless,
+      technology-driven solutions that save time and reduce frustration"
+   
+   2. "We're committed to building smart cities by connecting drivers
+      with available parking spaces in real-time, reducing traffic
+      congestion, and contributing to cleaner environment"
+
+C. VALUES SECTION
+   
+   Title: "Our Values"
+   
+   4 Value Cards (2x2 grid):
+   
+   1. 🎯 Simplicity
+      "We design our platform to be intuitive and easy to use,
+      ensuring smooth experience for all users"
+   
+   2. ⚡ Innovation
+      "We constantly evolve our technology to provide cutting-edge
+      solutions for modern parking challenges"
+   
+   3. 🤝 Reliability
+      "We ensure our service is dependable, secure, and available
+      whenever you need it"
+   
+   4. 🌱 Sustainability
+      "We promote eco-friendly practices by reducing unnecessary
+      driving and supporting EV charging"
+
+D. STORY SECTION
+   
+   Background: Primary-50 card
+   
+   Title: "Our Story"
+   
+   Content (2 paragraphs):
+   1. Origin story - "Born from frustration of finding parking..."
+   2. Current status - "Proud to serve thousands of users..."
+
+E. TEAM SECTION (Optional)
+   - Founder information
+   - Team photos
+   - Leadership
+
+F. CTA SECTION
+   - "Join Our Community"
+   - Sign-up button
+   - Statistics (users, cities, etc.)
+
+
+12. CONTACT PAGE (/contact)
+================================================================================
+File: Contact.jsx
+Route: /contact
+Access: Public
+Purpose: Contact form and information
+
+SECTIONS:
+---------
+
+A. HERO SECTION
+   Background: Blue gradient
+   
+   Content:
+   - Title: "Contact Us"
+   - Subtitle: "We'd love to hear from you. Get in touch with our team"
+
+B. TWO-COLUMN LAYOUT
+
+   LEFT COLUMN - Contact Form:
+   
+   Form Fields:
+   1. Name (text input, required)
+   2. Email (email input, required)
+   3. Subject (text input, required)
+   4. Message (textarea, 5 rows, required)
+   
+   Submit Button:
+   - "Send Message" (full width, primary blue)
+   - On submit: Alert "Thank you for your message!"
+   - Form reset after submission
+   
+   Styling:
+   - White card background
+   - Shadow
+   - Proper spacing
+   - Focus states (blue ring)
+
+   RIGHT COLUMN - Contact Information:
+   
+   Cards for:
+   
+   1. 📧 Email
+      - Icon
+      - Label: "Email Us"
+      - Email: support@parkeasy.com
+      - Clickable mailto link
+   
+   2. 📞 Phone
+      - Icon
+      - Label: "Call Us"
+      - Phone: +91 1234567890
+      - Clickable tel link
+   
+   3. 📍 Office
+      - Icon
+      - Label: "Visit Us"
+      - Address: "123 Main Street, City"
+      - Map link (optional)
+   
+   4. 🕐 Hours
+      - Icon
+      - Label: "Business Hours"
+      - Hours: "Mon-Fri: 9AM-6PM"
+      - Availability note
+
+C. SOCIAL MEDIA LINKS (Optional)
+   - Twitter
+   - Facebook
+   - LinkedIn
+   - Instagram
+
+D. MAP INTEGRATION (Optional)
+   - Google Maps embed
+   - Office location
+   - Interactive map
+
+E. FORM VALIDATION
+   - Required field indicators
+   - Email format validation
+   - Character limits
+   - Error messages
+
+
+13. HELP CENTER PAGE (/help)
+================================================================================
+File: HelpCenter.jsx
+Route: /help
+Access: Public
+Purpose: FAQs and support information
+
+SECTIONS:
+---------
+
+A. HERO SECTION
+   Background: Blue gradient
+   
+   Content:
+   - Title: "Help Center"
+   - Subtitle: "Find answers to common questions and get support"
+
+B. QUICK LINKS SECTION
+   
+   3-column grid of action cards:
+   
+   1. 💬 Contact Support
+      "Get in touch with our team"
+      Click → /contact
+   
+   2. 📊 My Bookings
+      "View and manage bookings"
+      Click → /dashboard
+   
+   3. 💰 Pricing Info
+      "Learn about our rates"
+      Click → /pricing
+   
+   Card Design:
+   - White background
+   - Hover effect (shadow elevation)
+   - Clickable
+   - Centered content
+
+C. FAQ SECTION
+   
+   Title: "Frequently Asked Questions"
+   
+   10 FAQ Items (Accordion-style):
+   
+   1. How do I book a parking slot?
+      Answer: Sign up process, slot selection, confirmation
+   
+   2. What is the minimum booking duration?
+      Answer: 1 hour minimum, fair usage explanation
+   
+   3. How much does parking cost?
+      Answer: ₹50/hour, calculation method
+   
+   4. Can I cancel my booking?
+      Answer: Yes, cancellation process from dashboard
+   
+   5. How do I check in when I arrive?
+      Answer: QR code usage, scanning process
+   
+   6. What payment methods are accepted?
+      Answer: Credit/debit cards, UPI, digital wallets
+   
+   7. Can I extend my parking duration?
+      Answer: Current limitation, future feature note
+   
+   8. What if I arrive late or leave early?
+      Answer: Policy explanation, charges
+   
+   9. Do you have EV charging facilities?
+      Answer: Yes, EV slot types available
+   
+   10. How do I get a receipt?
+       Answer: PDF download from booking details
+   
+   FAQ Design:
+   - Expandable/collapsible (optional)
+   - Question in bold
+   - Answer in regular text
+   - Clear separation
+   - Easy scanning
+
+D. SEARCH FUNCTIONALITY (Optional)
+   - Search FAQs
+   - Filter by category
+   - Quick find
+
+E. STILL NEED HELP SECTION
+   
+   Background: Blue gradient
+   
+   Content:
+   - Message: "Still have questions?"
+   - "Contact Support" button
+   - Email link
+   - Phone number
+
+
+14. TERMS OF SERVICE PAGE (/terms)
+================================================================================
+File: TermsOfService.jsx
+Route: /terms
+Access: Public
+Purpose: Legal terms and conditions
+
+SECTIONS:
+---------
+
+A. HERO SECTION
+   Background: Blue gradient
+   
+   Content:
+   - Title: "Terms of Service"
+   - Last updated: December 9, 2025
+
+B. CONTENT SECTIONS
+   
+   White card with legal content
+   
+   1. Acceptance of Terms
+      - Binding agreement
+      - Usage conditions
+      - Agreement to abide
+   
+   2. Use of Service
+      - Platform purpose
+      - User obligations:
+        * Provide accurate information
+        * Maintain account security
+        * Lawful purposes only
+        * Respect minimum duration
+        * Time slot compliance
+   
+   3. Booking and Payment
+      - Availability subject to confirmation
+      - Payment terms:
+        * ₹50/hour pricing
+        * Payment at booking
+        * Cancellation fees
+        * No refunds policy
+   
+   4. Cancellation Policy
+      - Cancellation process
+      - Timing considerations
+      - Policy variations
+   
+   5. User Responsibilities
+      - Vehicle and belongings
+      - Parking lot rules
+      - Damage reporting
+      - Slot designation
+      - Insurance requirements
+   
+   6. Limitation of Liability
+      - No liability for damage/theft
+      - User responsibility
+      - Insurance recommendations
+   
+   7. Modifications to Service
+      - Right to modify
+      - Notice of changes
+      - Continued use consent
+   
+   8. Termination
+      - Account termination rights
+      - Violation consequences
+      - Access restriction
+   
+   9. Governing Law
+      - Jurisdiction
+      - Dispute resolution
+      - Legal framework
+   
+   10. Contact Information
+       - Support email
+       - Legal inquiries
+       - Address
+
+C. FORMATTING
+   - Numbered sections
+   - Bold headings (text-2xl)
+   - Bulleted lists
+   - Regular body text (gray-600)
+   - Proper spacing
+   - Professional layout
+
+D. NAVIGATION
+   - Table of contents (optional)
+   - Smooth scroll to sections
+   - Back to top button
+
+
+15. PRIVACY POLICY PAGE (/privacy)
+================================================================================
+File: PrivacyPolicy.jsx
+Route: /privacy
+Access: Public
+Purpose: Data privacy and protection information
+
+SECTIONS:
+---------
+
+A. HERO SECTION
+   Background: Blue gradient
+   
+   Content:
+   - Title: "Privacy Policy"
+   - Last updated: December 9, 2025
+
+B. CONTENT SECTIONS
+   
+   White card with privacy information
+   
+   1. Information We Collect
+      - Personal information:
+        * Name and contact (email, phone)
+        * Vehicle registration
+        * Payment information
+        * Booking history
+        * Account credentials
+   
+   2. How We Use Your Information
+      - Usage purposes:
+        * Process bookings
+        * Send confirmations
+        * Process payments
+        * Provide support
+        * Improve services
+        * Send communications (with consent)
+        * Legal compliance
+   
+   3. Information Sharing
+      - No selling of data
+      - Sharing with:
+        * Parking lot operators
+        * Payment processors
+        * Service providers
+        * Law enforcement (when required)
+   
+   4. Data Security
+      - Technical measures
+      - Organizational measures
+      - Protection against:
+        * Unauthorized access
+        * Alteration
+        * Disclosure
+        * Destruction
+      - Security features:
+        * Encryption
+        * Secure servers
+        * Regular audits
+   
+   5. Data Retention
+      - Retention duration
+      - Service necessity
+      - Legal obligations
+      - Booking history storage
+      - Accounting purposes
+   
+   6. Your Rights
+      - Access rights
+      - Correction rights
+      - Deletion rights
+      - Objection rights
+      - Data portability
+      - Complaint rights
+   
+   7. Cookies and Tracking
+      - Cookie usage
+      - Types of cookies
+      - Purpose of tracking
+      - Opt-out options
+   
+   8. Third-Party Services
+      - Firebase (Authentication)
+      - Payment processors
+      - Analytics services
+      - Third-party policies
+   
+   9. Children's Privacy
+      - Age restrictions
+      - No collection from minors
+      - Parental notice
+   
+   10. Updates to Policy
+       - Right to update
+       - Notification method
+       - Review recommendation
+   
+   11. Contact Information
+       - Privacy inquiries
+       - Data requests
+       - Email contact
+       - Response timeframe
+
+C. FORMATTING
+   - Numbered sections
+   - Bold headings
+   - Bulleted lists
+   - Clear language
+   - Professional layout
+   - Easy to read
+
+D. COMPLIANCE
+   - GDPR considerations
+   - Data protection laws
+   - User rights
+   - Transparent policies
+
+
+================================================================================
+                          DESIGN SYSTEM SUMMARY
+================================================================================
+
+COLOR PALETTE:
+--------------
+Primary Colors:
+- Primary-50: Very light blue (backgrounds)
+- Primary-100: Light blue (accents)
+- Primary-600: Main blue (buttons, headers)
+- Primary-700: Dark blue (hover states)
+
+Status Colors:
+- Blue: Booked, Information
+- Green: Active, Available, Success
+- Red: Cancelled, Error, Danger
+- Yellow: Pending, Warning
+- Purple: Special features (EV, Premium)
+- Gray: Completed, Inactive, Neutral
+
+Text Colors:
+- Gray-900: Primary text (headings)
+- Gray-800: Secondary headings
+- Gray-700: Body text
+- Gray-600: Supporting text
+- Gray-400: Placeholder text
+
+TYPOGRAPHY:
+-----------
+Font Family: System fonts (Tailwind default)
+- Headings: Bold, 2xl to 5xl
+- Body: Regular, base to lg
+- Labels: Medium, sm to base
+- Buttons: Semibold, base to lg
+
+SPACING:
+--------
+Consistent use of Tailwind spacing:
+- Padding: p-4, p-6, p-8
+- Margin: mb-4, mb-6, mb-8
+- Gap: gap-4, gap-6, gap-8
+
+COMPONENTS:
+-----------
+Cards:
+- White background
+- Rounded corners (rounded-xl)
+- Shadow (shadow-sm to shadow-xl)
+- Border (optional, gray-100)
+- Padding (p-6 to p-8)
+
+Buttons:
+- Primary: Blue background, white text
+- Secondary: White background, blue border
+- Danger: Red background, white text
+- Sizes: Small to Large
+- States: Hover, Active, Disabled
+- Transitions: Smooth color and shadow
+
+Forms:
+- Input fields: Border, rounded, focus ring
+- Labels: Bold, small, above field
+- Validation: Inline errors, red text
+- Placeholders: Gray-400
+
+Modals:
+- Overlay: Dark background (opacity)
+- Card: Centered, white, shadow
+- Close button: Top-right corner
+- Responsive sizing
+
+RESPONSIVE BREAKPOINTS:
+-----------------------
+- Mobile: < 768px (sm)
+- Tablet: 768px - 1024px (md)
+- Desktop: > 1024px (lg, xl)
+
+Layout Patterns:
+- Mobile: Single column, full width
+- Tablet: 2 columns, medium spacing
+- Desktop: 3-4 columns, large spacing
+
+NAVIGATION:
+-----------
+Navbar:
+- Fixed top (optional)
+- White background
+- Shadow
+- Logo left, actions right
+- Responsive menu
+
+ACCESSIBILITY:
+--------------
+- Semantic HTML
+- Aria labels
+- Keyboard navigation
+- Focus indicators
+- Color contrast (WCAG AA)
+- Screen reader support
+
+ANIMATIONS:
+-----------
+- Hover transitions (200-300ms)
+- Page transitions (smooth)
+- Loading spinners
+- Fade in/out effects
+- Scale transforms
+
+
+================================================================================
+                          USER FLOW SUMMARY
+================================================================================
+
+PUBLIC USER FLOW:
+-----------------
+1. Landing Page → Learn about service
+2. Login/Register → Authenticate via Google or Email
+3. Dashboard → View parking lots and bookings
+4. Parking Lot Page → Select slots with time
+5. Booking Modal → Confirm with vehicle number
+6. Booking Details → View QR code and details
+7. QR Scanner (at venue) → Check-in
+
+ADMIN USER FLOW:
+----------------
+1. Admin Login → Separate authentication
+2. Admin Panel → Overview dashboard
+3. Bookings Tab → Approve/decline pending bookings
+4. Parking Lots Tab → Manage facilities
+5. Slots Tab → Manage individual slots
+6. Analytics → View statistics and revenue
+
+BOOKING LIFECYCLE:
+------------------
+1. Pending → Created by user
+2. Approved → Admin confirmation
+3. Checked In → QR scan at venue
+4. Completed → After end time
+5. Cancelled → User or admin action
+
+
+================================================================================
+                               END OF PRESENTATION
+================================================================================
+
+This comprehensive presentation covers all 15 frontend pages of the ParkEasy
+Car Parking Slot Booking System, including detailed descriptions of layouts,
+content, functionality, user interactions, and design elements.
+
+For technical implementation details, refer to the individual JSX files.
+For backend integration, refer to the API documentation.
+
+Last Updated: December 10, 2025
