@@ -1,6 +1,7 @@
+
 # 🚗 ParkEasy - Car Parking Slot Booking System
 
-A full-stack parking slot booking system with real-time availability updates, QR code check-in, and Google OAuth authentication.
+A full-stack parking slot booking system with real-time availability updates, QR code check-in, and **Firebase Authentication (Google Sign-In) with JWT** for secure access.
 
 ## 📋 Table of Contents
 
@@ -19,7 +20,7 @@ A full-stack parking slot booking system with real-time availability updates, QR
 ## ✨ Features
 
 ### User Features
-- 🔐 **Google OAuth Authentication** - Secure login with Google accounts
+- 🔐 **Firebase Authentication (Google Sign-In)** - Secure login with Google accounts
 - 📍 **Real-time Slot Availability** - Live updates using Socket.IO
 - 📅 **Time-based Booking** - Book parking slots for specific time windows
 - 🎫 **QR Code Check-in** - Generate and scan QR codes for check-in
@@ -37,7 +38,7 @@ A full-stack parking slot booking system with real-time availability updates, QR
 ### Backend
 - **Runtime**: Node.js with Express
 - **Database**: PostgreSQL with UUID support
-- **Authentication**: Passport.js (Google OAuth 2.0) + JWT
+- **Authentication**: Firebase Auth (Google Sign-In) + JWT
 - **Real-time**: Socket.IO
 - **QR Generation**: qrcode library
 
@@ -131,13 +132,19 @@ DB_NAME=parking_booking
 DB_USER=postgres
 DB_PASSWORD=your_password
 
+
 # JWT Secret (generate a random string)
 JWT_SECRET=your_super_secret_jwt_key_change_this_in_production
 
-# Google OAuth (from Google Cloud Console)
-GOOGLE_CLIENT_ID=your_google_client_id
-GOOGLE_CLIENT_SECRET=your_google_client_secret
-GOOGLE_CALLBACK_URL=http://localhost:5000/api/auth/google/callback
+# Firebase Admin SDK (Service Account JSON)
+FIREBASE_PROJECT_ID=your_firebase_project_id
+FIREBASE_CLIENT_EMAIL=your_firebase_client_email
+FIREBASE_PRIVATE_KEY=your_firebase_private_key
+
+# (Optional) Google OAuth (legacy, not used if using Firebase Auth)
+# GOOGLE_CLIENT_ID=your_google_client_id
+# GOOGLE_CLIENT_SECRET=your_google_client_secret
+# GOOGLE_CALLBACK_URL=http://localhost:5000/api/auth/google/callback
 
 # Frontend URL
 FRONTEND_URL=http://localhost:3000
@@ -162,19 +169,19 @@ REACT_APP_API_URL=http://localhost:5000
 REACT_APP_SOCKET_URL=http://localhost:5000
 ```
 
-### 3. Google OAuth Setup
 
-1. Go to [Google Cloud Console](https://console.cloud.google.com/)
-2. Create a new project or select existing one
-3. Enable **Google+ API**
-4. Create **OAuth 2.0 Credentials**:
-   - Application type: Web application
-   - Authorized redirect URIs: `http://localhost:5000/api/auth/google/callback`
-5. Copy **Client ID** and **Client Secret** to backend `.env`
+### 3. Firebase Authentication Setup
+
+1. Go to [Firebase Console](https://console.firebase.google.com/)
+2. Create a new project or select an existing one
+3. Enable **Authentication** → **Sign-in method** → **Google**
+4. Download the **Service Account JSON** from Project Settings → Service Accounts
+5. Place the file as `backend/firebase-service-account.json`
+6. Copy the relevant fields to your `.env` as shown above
 
 ### 4. Create Admin User
 
-After first Google login, update the user role in database:
+After first Google login (via Firebase), update the user role in database:
 
 ```sql
 UPDATE users SET role = 'admin' WHERE email = 'your-email@gmail.com';
@@ -252,12 +259,12 @@ curl -X POST http://localhost:5000/api/bookings/check-in \
 
 **Expected**: Booking status changes to "checked_in"
 
-### 4. Test Google OAuth
+### 4. Test Google Sign-In (Firebase Auth)
 
 1. Open http://localhost:3000/login
 2. Click "Sign in with Google"
-3. Complete Google authentication
-4. **Expected**: Redirected to dashboard with token stored in localStorage
+3. Complete Google authentication (via Firebase popup)
+4. **Expected**: Redirected to dashboard with JWT token stored in localStorage
 
 ### 5. Test Admin Features
 
@@ -289,12 +296,13 @@ vercel --prod
    - `REACT_APP_API_URL`: Your backend URL
    - `REACT_APP_SOCKET_URL`: Your backend URL
 
+
 ### Backend Deployment (Render/Railway)
 
-1. **Extract Firebase Credentials for Production:**
+1. **Encode Firebase Credentials for Production:**
 ```bash
 cd backend
-node extract-firebase-env.js
+node encode-firebase-credentials.js
 ```
 This will display the environment variables needed. Copy them to your hosting platform.
 
@@ -306,7 +314,8 @@ This will display the environment variables needed. Copy them to your hosting pl
 
 📖 **See [DEPLOYMENT-FIREBASE.md](./DEPLOYMENT-FIREBASE.md) for detailed Firebase deployment guide**
 
-3. **Update Google OAuth** redirect URIs in Google Console
+
+3. **Update Firebase Auth** authorized domains in Firebase Console
 
 4. **Deploy PostgreSQL** database (use managed service like:
    - Render PostgreSQL
@@ -389,17 +398,17 @@ Project-C/
 
 ## 📡 API Documentation
 
+
 ### Authentication Endpoints
 
-#### `GET /api/auth/google`
-Initiate Google OAuth flow
-
-#### `GET /api/auth/google/callback`
-OAuth callback (redirects to frontend with token)
+#### `POST /api/auth/firebase`
+Authenticate with Firebase ID token (from frontend)
+- **Body**: `{ idToken }`
+- **Response**: JWT token for API access
 
 #### `GET /api/auth/me`
 Get current user info
-- **Headers**: `Authorization: Bearer <token>`
+- **Headers**: `Authorization: Bearer <jwt_token>`
 - **Response**: User object
 
 ### Booking Endpoints (Protected)
@@ -483,8 +492,8 @@ Get system analytics and statistics
 
 ## 🔒 Security Features
 
-1. **JWT Authentication** - Secure API access
-2. **Password-less Login** - Google OAuth only
+1. **JWT Authentication** - Secure API access (JWT issued after Firebase Auth)
+2. **Password-less Login** - Google Sign-In via Firebase
 3. **Role-based Access** - Admin vs User permissions
 4. **Transaction Locking** - Prevents race conditions
 5. **QR Token Expiry** - 24-hour QR code validity
@@ -516,6 +525,16 @@ Get system analytics and statistics
 ## 📄 License
 
 This project is for educational/portfolio purposes.
+
+---
+
+## 🔥 Firebase Auth & JWT Flow (Summary)
+
+1. **Frontend**: User signs in with Google using Firebase Auth (client SDK)
+2. **Frontend**: Sends Firebase ID token to backend (`/api/auth/firebase`)
+3. **Backend**: Verifies ID token with Firebase Admin SDK, issues JWT for API access
+4. **Frontend**: Stores JWT and uses it for all protected API requests
+5. **Backend**: Validates JWT for all protected endpoints
 
 ## 👥 Author
 
